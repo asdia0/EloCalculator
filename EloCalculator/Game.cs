@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
 
     public class Game
     {
@@ -37,7 +38,8 @@
             this.date = date;
 
             UpdateGameRating(this);
-            UpdatePlayerTitle(this.player1, this.player2);
+            UpdatePlayerTitle(this.player1);
+            UpdatePlayerTitle(this.player2);
 
             Program.gameList.Add(this);
         }
@@ -80,40 +82,19 @@
             p2.rating += kCoeff * (scoreB - expectedScoreB);
         }
 
-        public static void UpdatePlayerTitle(Player player1, Player player2)
+        public static void UpdatePlayerTitle(Player player)
         {
-            if (player1.title == null)
+            List<string> titles = Program.ranks.Keys.ToList();
+            List<double> ratings = Program.ranks.Values.ToList();
+
+            for (int i = 0; i < Program.ranks.Count; i++)
             {
-                if (player1.rating >= 1300)
+                string rank = titles[i];
+                double rating = ratings[i];
+
+                if (titles.IndexOf(player.title) < i && player.rating >= rating)
                 {
-                    player1.title = "M";
-                }
-            }
-            else
-            {
-                if (player1.title == "M")
-                {
-                    if (player1.rating >= 1500)
-                    {
-                        player1.rating = 1500;
-                    }
-                }
-            }
-            if (player2.title == null)
-            {
-                if (player2.rating >= 1300)
-                {
-                    player2.title = "M";
-                }
-            }
-            else
-            {
-                if (player2.title == "M")
-                {
-                    if (player2.rating >= 1500)
-                    {
-                        player2.rating = 1500;
-                    }
+                    player.title = rank;
                 }
             }
         }

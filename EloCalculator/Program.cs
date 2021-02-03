@@ -15,14 +15,23 @@
 
         public static List<Game> newGames = new List<Game>();
 
+        public static Dictionary<string, double> setPlayerRatings = new Dictionary<string, double>();
+
+        public static Dictionary<string, double> ranks = new Dictionary<string, double>();
+
+        public static double startingRating;
+
         public static void Main(string[] args)
         {
             Console.WriteLine("Starting application...");
 
-            playerList = JsonConvert.DeserializeObject<List<Player>>(File.ReadAllText("resources/players.json"));
-            gameList = JsonConvert.DeserializeObject<List<Game>>(File.ReadAllText("resources/games.json"));
+            List<Dictionary<string, double>> settings = JsonConvert.DeserializeObject<List<Dictionary<string, double>>>(File.ReadAllText("resources/settings.json"));
 
-            FileInfo fi = new FileInfo("resources/newGames.xlsx");
+            setPlayerRatings = settings[0];
+            ranks = settings[1];
+            startingRating = settings[2]["startingRating"];
+
+            FileInfo fi = new FileInfo("resources/games.xlsx");
 
             ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
 
@@ -76,21 +85,10 @@
                 excelPackage.Save();
             }
 
-            string pjson = JsonConvert.SerializeObject(playerList, Formatting.Indented);
-            using (StreamWriter outputFile = new StreamWriter("resources/players.json"))
-            {
-                outputFile.Write(pjson);
-            }
-            string gjson = JsonConvert.SerializeObject(gameList, Formatting.Indented);
-            using (StreamWriter outputFile = new StreamWriter("resources/games.json"))
-            {
-                outputFile.Write(gjson);
-            }
-
             string visual = string.Empty;
             foreach (Player p in playerList)
             {
-                visual += $"{p.title},{p.name},{p.rating},,{p.wins},{p.draws},{p.losses}\n";
+                visual += $"{p.title},{p.name},{p.rating},{p.wins},{p.draws},{p.losses}\n";
             }
 
             using (StreamWriter outputFile = new StreamWriter("resources/googleSheets.csv"))
@@ -98,6 +96,17 @@
                 outputFile.Write(visual);
             }
 
+            using (StreamWriter outputFile = new StreamWriter("resources/.games.json"))
+            {
+                string e = Newtonsoft.Json.JsonConvert.SerializeObject(gameList, Formatting.Indented);
+                outputFile.Write(e);
+            }
+
+            using (StreamWriter outputFile = new StreamWriter("resources/.players.json"))
+            {
+                string e = Newtonsoft.Json.JsonConvert.SerializeObject(playerList, Formatting.Indented);
+                outputFile.Write(e);
+            }
             Console.WriteLine("Complete.");
         }
     }

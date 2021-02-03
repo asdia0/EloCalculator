@@ -1,0 +1,13 @@
+[
+    {
+        "Player name": rating
+    },
+
+    {
+        "Rank": requiredRating
+    },
+
+    {
+        "startingRating" startingRating
+    }
+]
