@@ -1,113 +1,317 @@
 ﻿namespace EloCalculator
 {
     using System;
-    using System.Collections.Generic;
-    using System.IO;
-    using System.Linq;
-    using Newtonsoft.Json;
-    using OfficeOpenXml;
+    using System.Configuration;
+    using System.Data;
+    using System.Data.SqlClient;
 
     public class Program
     {
-        public static List<Player> playerList = new List<Player>();
+        public static string connectionString = ConfigurationManager.AppSettings.Get("SQLConnectionString");
 
-        public static List<Game> gameList = new List<Game>();
+        public static int defaultRating = 1000;
 
-        public static List<Game> newGames = new List<Game>();
+        public static int kCoeff = 40;
 
-        public static Dictionary<string, double> setPlayerRatings = new Dictionary<string, double>();
-
-        public static Dictionary<string, double> ranks = new Dictionary<string, double>();
-
-        public static double startingRating;
+        public static int benchmarkCoeff = 400;
 
         public static void Main(string[] args)
         {
-            Console.WriteLine("Starting application...");
+            NewGame("player1", "player2", null, DateTime.Now, true);
+        }
 
-            List<Dictionary<string, double>> settings = JsonConvert.DeserializeObject<List<Dictionary<string, double>>>(File.ReadAllText("resources/settings.json"));
-
-            setPlayerRatings = settings[0];
-            ranks = settings[1];
-            startingRating = settings[2]["startingRating"];
-
-            FileInfo fi = new FileInfo("resources/games.xlsx");
-
-            ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
-
-            using (ExcelPackage excelPackage = new ExcelPackage(fi))
+        /// <summary>
+        /// Adds a game and updates the players' info.
+        /// </summary>
+        /// <param name="white">White player's name.</param>
+        /// <param name="black">Black player's name.</param>
+        /// <param name="result">Result of the game. True = white won, False = black won, Null = draw.</param>
+        /// <param name="dateTime">When the game was played.</param>
+        /// <param name="isRated">Whether the game affects the player's ratings.</param>
+        public static void NewGame(string white, string black, bool? result, DateTime dateTime, bool isRated)
+        {
+            using (SqlConnection connection = new SqlConnection(connectionString))
             {
-                //Get a WorkSheet by index. Note that EPPlus indexes are base 1, not base 0!
-                ExcelWorksheet ws = excelPackage.Workbook.Worksheets[0];
+                connection.Open();
 
-                var start = ws.Dimension.Start.Row;
-                var end = ws.Dimension.End.Row;
+                // add game
+                AddGame(white, black, result, dateTime, isRated);
 
-                for (int row = start; row <= end; row++)
+                if (isRated)
                 {
-                    if (ws.Cells[row, 1].Value == null)
-                    {
-                        break;
-                    }
-                    string p1Name = ws.Cells[row, 1].Value.ToString();
-                    string p2Name = ws.Cells[row, 2].Value.ToString();
-                    string result = ws.Cells[row, 3].Value.ToString();
-                    string date = ws.Cells[row, 4].Value.ToString();
-#nullable enable
-                    Player? p1 = null;
-                    Player? p2 = null;
-#nullable disable
-                    foreach (Player p in playerList)
-                    {
-                        if (p.name == p1Name)
-                        {
-                            p1 = p;
-                        }
-                        if (p.name == p2Name)
-                        {
-                            p2 = p;
-                        }
-                    }
+                    // get player ratings
+                    (double whiteRating, double blackRating) = CalculateRating(GetRating(white), GetRating(black), result);
 
-                    if (p1 == null)
-                    {
-                        p1 = new Player(p1Name);
-                    }
-
-                    if (p2 == null)
-                    {
-                        p2 = new Player(p2Name);
-                    }
-
-                    newGames.Add(new Game(p1, p2, result, date));
+                    // update player ratings
+                    UpdatePlayerRatings(white, whiteRating);
+                    UpdatePlayerRatings(black, blackRating);
                 }
 
-                excelPackage.Save();
+                // update player win-lose-draw
+                UpdatePlayerWLD(white, true, result);
+                UpdatePlayerWLD(black, false, result);
+            }
+        }
+
+        /// <summary>
+        /// Calculates the ratings of the players after a game.
+        /// </summary>
+        /// <param name="whiteRating">White's initial rating.</param>
+        /// <param name="blackRating">Black's initial rating.</param>
+        /// <param name="result">Result of the game. True = white won, False = black won, Null = draw.</param>
+        /// <returns>A tuplet of doubles. The first item is white's new rating, the second item is black's new rating.</returns>
+        public static (double, double) CalculateRating(double whiteRating, double blackRating, bool? result)
+        {
+            double scoreA, scoreB = 0;
+
+            switch (result)
+            {
+                case (true):
+                    {
+                        scoreA = 1;
+                        scoreB = 0;
+                        break;
+                    }
+                case (false):
+                    {
+                        scoreA = 0;
+                        scoreB = 1;
+                        break;
+                    }
+                case (null):
+                    {
+                        scoreA = scoreB = 0.5;
+                        break;
+                    }
             }
 
-            string visual = string.Empty;
-            foreach (Player p in playerList)
+            double expectedScoreA = 1 / (1 + Math.Pow(10, (blackRating - whiteRating) / benchmarkCoeff));
+
+            double expectedScoreB = 1 / (1 + Math.Pow(10, (whiteRating - blackRating) / benchmarkCoeff));
+
+            return (whiteRating + kCoeff * (scoreA - expectedScoreA), blackRating + kCoeff * (scoreB - expectedScoreB));
+        }
+
+        /// <summary>
+        /// Gets the ID of the player from the database.
+        /// </summary>
+        /// <param name="name">The player's name.</param>
+        /// <returns></returns>
+        public static int GetID(string name)
+        {
+            using (SqlConnection connection = new SqlConnection(connectionString))
             {
-                visual += $"{p.title},{p.name},{p.rating},{p.wins},{p.draws},{p.losses}\n";
+                connection.Open();
+
+                using (SqlCommand getID = new SqlCommand($"SELECT Id FROM Player WHERE Name LIKE @Name", connection))
+                {
+                    getID.Parameters.Add("@Name", SqlDbType.Text).Value = name;
+                    var res =  getID.ExecuteScalar();
+
+                    if (res == null)
+                    {
+                        return 0;
+                    }
+                    else
+                    {
+                        return (int)res;
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// Gets the rating of the player from the database.
+        /// </summary>
+        /// <param name="name">The player's name.</param>
+        /// <returns></returns>
+        public static double GetRating(string name)
+        {
+            int PlayerID = GetID(name);
+            
+            while (PlayerID == 0)
+            {
+                // will probably cause some problems later on, but who cares?
+                AddPlayer(name);
+                PlayerID = GetID(name);
             }
 
-            using (StreamWriter outputFile = new StreamWriter("resources/googleSheets.csv"))
+            using (SqlConnection connection = new SqlConnection(connectionString))
             {
-                outputFile.Write(visual);
+                connection.Open();
+
+                using (SqlCommand getRating = new SqlCommand($"SELECT Rating FROM Player WHERE Id = @PlayerID", connection))
+                {
+                    getRating.Parameters.Add("@PlayerID", SqlDbType.Int).Value = PlayerID;
+                    return (double)getRating.ExecuteScalar();
+                }
+            }
+        }
+
+        /// <summary>
+        /// Adds a player to the database.
+        /// </summary>
+        /// <param name="name">The player's name.</param>
+        public static void AddPlayer(string name)
+        {
+            if (GetID(name) == 0)
+            {
+                using (SqlConnection connection = new SqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    using (SqlCommand addPlayer = new SqlCommand("INSERT INTO Player(Name, Rating, Wins, Losses, Draws) VALUES(@Name, @Rating, @Wins, @Losses, @Draws);", connection))
+                    {
+                        addPlayer.Parameters.Add("@Name", SqlDbType.Text).Value = name;
+                        addPlayer.Parameters.Add("@Rating", SqlDbType.Float).Value = defaultRating;
+                        addPlayer.Parameters.Add("@Wins", SqlDbType.Int).Value = 0;
+                        addPlayer.Parameters.Add("@Losses", SqlDbType.Int).Value = 0;
+                        addPlayer.Parameters.Add("@Draws", SqlDbType.Int).Value = 0;
+
+                        addPlayer.ExecuteNonQuery();
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// Adds a game to the database.
+        /// </summary>
+        /// <param name="white">White player's name</param>
+        /// <param name="black">Black player's name</param>
+        /// <param name="result">Result of the game. True = white won, False = black won, Null = draw.</param>
+        /// <param name="dateTime">When the game was played.</param>
+        /// <param name="isRated">Whether the game affects the player's ratings.</param>
+        public static void AddGame(string white, string black, bool? result, DateTime dateTime, bool isRated)
+        {
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+
+                using (SqlCommand addGame = new SqlCommand($"INSERT INTO Game(White, Black, Result, DateTime, Rated) VALUES(@White, @Black, @Result, @DateTime, @Rated);", connection))
+                {
+                    addGame.Parameters.Add("@White", SqlDbType.Text).Value = white;
+                    addGame.Parameters.Add("@Black", SqlDbType.Text).Value = black;
+                    if (result == null)
+                    {
+                        addGame.Parameters.Add("@Result", SqlDbType.Bit).Value = DBNull.Value;
+                    }
+                    else
+                    {
+                        addGame.Parameters.Add("@Result", SqlDbType.Bit).Value = result;
+                    }
+                    addGame.Parameters.Add("@DateTime", SqlDbType.DateTime).Value = dateTime.ToString("yyyy-MM-dd HH:mm:ss");
+                    addGame.Parameters.Add("@Rated", SqlDbType.Bit).Value = isRated;
+
+                    addGame.ExecuteNonQuery();
+                }
+            }
+        }
+        
+        /// <summary>
+        /// Updates the player's ratings.
+        /// </summary>
+        /// <param name="name">The player's name.</param>
+        /// <param name="rating">The player's new rating.</param>
+        public static void UpdatePlayerRatings(string name, double rating)
+        {
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+
+                using (SqlCommand updateRating = new SqlCommand($"UPDATE Player SET Rating = {rating} WHERE Name LIKE @Name", connection))
+                {
+                    updateRating.Parameters.Add("@Name", SqlDbType.Text).Value = name;
+                    updateRating.ExecuteNonQuery();
+                }
+            }
+        }
+
+        /// <summary>
+        /// Updates the player's win-lose-draw stats.
+        /// </summary>
+        /// <param name="name">The player's name.</param>
+        /// <param name="side">The player's colour in the game. True = white, False = black.</param>
+        /// <param name="result">Result of the game. True = white won, False = black won, Null = draw.</param>
+        public static void UpdatePlayerWLD(string name, bool side, bool? result)
+        {
+            // Draw
+            if (result == null)
+            {
+                IncrementDraws(name);
+                return;
             }
 
-            using (StreamWriter outputFile = new StreamWriter("resources/.games.json"))
+            // White
+            if (side)
             {
-                string e = Newtonsoft.Json.JsonConvert.SerializeObject(gameList, Formatting.Indented);
-                outputFile.Write(e);
+                // Won
+                if (result == true)
+                {
+                    IncrementWins(name);
+                }
+                // Lost
+                else
+                {
+                    IncrementLosses(name);
+                }
             }
+            // Black
+            else
+            {
+                // Won
+                if (result == false)
+                {
+                    IncrementWins(name);
+                }
+                // Lost
+                else
+                {
+                    IncrementLosses(name);
+                }
+            }
+        }
 
-            using (StreamWriter outputFile = new StreamWriter("resources/.players.json"))
+        public static void IncrementDraws(string name)
+        {
+            using (SqlConnection connection = new SqlConnection(connectionString))
             {
-                string e = Newtonsoft.Json.JsonConvert.SerializeObject(playerList, Formatting.Indented);
-                outputFile.Write(e);
+                connection.Open();
+
+                using (SqlCommand incDraw = new SqlCommand($"UPDATE Player SET Draws = Draws + 1 WHERE Name LIKE @Name", connection))
+                {
+                    incDraw.Parameters.Add("@Name", SqlDbType.Text).Value = name;
+                    incDraw.ExecuteNonQuery();
+                }
             }
-            Console.WriteLine("Complete.");
+        }
+
+        public static void IncrementWins(string name)
+        {
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+
+                using (SqlCommand incWin = new SqlCommand($"UPDATE Player SET Wins = Wins + 1 WHERE Name LIKE @Name", connection))
+                {
+                    incWin.Parameters.Add("@Name", SqlDbType.Text).Value = name;
+                    incWin.ExecuteNonQuery();
+                }
+            }
+        }
+
+        public static void IncrementLosses(string name)
+        {
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+
+                using (SqlCommand incLoss = new SqlCommand($"UPDATE Player SET Losses = Losses + 1 WHERE Name LIKE @Name", connection))
+                {
+                    incLoss.Parameters.Add("@Name", SqlDbType.Text).Value = name;
+                    incLoss.ExecuteNonQuery();
+                }
+            }
         }
     }
 }
