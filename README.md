@@ -6,10 +6,10 @@ Calculates the Elo rating of players and creates a leaderboard.
 
 Create a .xlsx file in the same directory as the executable with game details in the following format:
 
-Column 1: Player 1's name
-Column 2: Player 2's name
-Column 3: Result (0-1, 1-0, 1/2-1/2)
-Column 4: Date
+Column 1: Player 1's name  
+Column 2: Player 2's name  
+Column 3: Result (0-1, 1-0, 1/2-1/2)  
+Column 4: Date  
 
 ## Customisation
 
