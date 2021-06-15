@@ -17,7 +17,8 @@
 
         public static void Main(string[] args)
         {
-            NewGame("player1", "player2", null, DateTime.Now, true);
+            ConfigureDB();
+            //NewGame("player1", "player2", null, DateTime.Now, true);
         }
 
         /// <summary>
@@ -272,6 +273,10 @@
             }
         }
 
+        /// <summary>
+        /// Adds 1 to Player.Draws.
+        /// </summary>
+        /// <param name="name">The player's name.</param>
         public static void IncrementDraws(string name)
         {
             using (SqlConnection connection = new SqlConnection(connectionString))
@@ -286,6 +291,10 @@
             }
         }
 
+        /// <summary>
+        /// Adds 1 to Player.Wins.
+        /// </summary>
+        /// <param name="name">The player's name.</param>
         public static void IncrementWins(string name)
         {
             using (SqlConnection connection = new SqlConnection(connectionString))
@@ -300,6 +309,10 @@
             }
         }
 
+        /// <summary>
+        /// Adds 1 to Player.Losses.
+        /// </summary>
+        /// <param name="name">The player's name.</param>
         public static void IncrementLosses(string name)
         {
             using (SqlConnection connection = new SqlConnection(connectionString))
@@ -310,6 +323,54 @@
                 {
                     incLoss.Parameters.Add("@Name", SqlDbType.Text).Value = name;
                     incLoss.ExecuteNonQuery();
+                }
+            }
+        }
+
+        /// <summary>
+        /// Checks if the tables Game and Player exists and adds them if not.
+        /// </summary>
+        public static void ConfigureDB()
+        {
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+
+                // Game
+                if (!TableExists("Game"))
+                {
+                    // Add
+                    using (SqlCommand addGame = new SqlCommand("CREATE TABLE [dbo].[Game] ([Id] INT IDENTITY(1, 1) NOT NULL, [White] TEXT NOT NULL, [Black] TEXT NOT NULL, [Result] BIT NULL, [DateTime] DATETIME NOT NULL, [Rated] BIT NOT NULL, PRIMARY KEY CLUSTERED([Id] ASC));", connection))
+                    {
+                        addGame.ExecuteNonQuery();
+                    }
+                }
+
+                // Player
+                if (!TableExists("Player"))
+                {
+                    // Add
+                    using (SqlCommand addPlayer = new SqlCommand("CREATE TABLE [dbo].[Player] ([Id] INT IDENTITY(1, 1) NOT NULL, [Name] TEXT NOT NULL, [Rating] FLOAT(53) NOT NULL, [Wins] INT NOT NULL, [Losses] INT NOT NULL, [Draws]  INT NOT NULL, PRIMARY KEY CLUSTERED([Id] ASC));", connection))
+                    {
+                        addPlayer.ExecuteNonQuery();
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// Checks if a table exists in the database.
+        /// </summary>
+        /// <param name="name">The table's name.</param>
+        public static bool TableExists(string name)
+        {
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+
+                using (SqlCommand checkTable = new SqlCommand($"SELECT CASE WHEN OBJECT_ID('dbo.{name}', 'U') IS NOT NULL THEN 1 ELSE 0 END", connection))
+                {
+                    return (int)checkTable.ExecuteScalar() == 1;
                 }
             }
         }
