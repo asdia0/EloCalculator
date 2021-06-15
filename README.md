@@ -3,7 +3,7 @@
 ## Features
 - [x] Elo calculator (duh)
 - [x] Tiebreaker calculator
-- [ ] Global/Tournament leaderboard
+- [X] Global/Tournament leaderboard
 - [ ] Tournament pairing
 
 ## Usage
