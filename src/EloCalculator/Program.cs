@@ -5,6 +5,7 @@
     using System.Configuration;
     using System.Data;
     using System.Data.SqlClient;
+    using System.Linq;
 
     public class Program
     {
@@ -19,7 +20,16 @@
         public static void Main(string[] args)
         {
             AddTournament("epic tournament");
-            //NewGame("player1", "player2", null, DateTime.Now, true);
+            NewGame("a", "b", true, DateTime.Now, true);
+            NewGame("c", "d", false, DateTime.Now, true);
+            NewGame("a", "d", null, DateTime.Now, true);
+            NewGame("b", "c", true, DateTime.Now, true);
+            AddPlayerToTournament("epic tournament", "a");
+            AddPlayerToTournament("epic tournament", "b");
+            AddPlayerToTournament("epic tournament", "c");
+            AddPlayerToTournament("epic tournament", "d");
+
+            AddTournamentRound("epic tournament", 1, new List<int> { 134, 135, 136, 137});
         }
 
         /// <summary>
@@ -382,6 +392,11 @@
         /// <param name="name">The tournament's name</param>
         public static void AddTournament(string name)
         {
+            if (TableExists(name))
+            {
+                return;
+            }
+
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
                 connection.Open();
@@ -406,8 +421,8 @@
                 AddTournamentInfoToGame(gameID, name, round);
 
                 // Update scores
-                UpdateScore(name, GetID(GetName(true, gameID)), true, GetResult(gameID));
-                UpdateScore(name, GetID(GetName(false, gameID)), false, GetResult(gameID));
+                UpdateScore(name, GetName(true, gameID), true, GetResult(gameID));
+                UpdateScore(name, GetName(false, gameID), false, GetResult(gameID));
 
                 // Update tiebreakers
                 UpdateSB(name, GetName(true, gameID));
@@ -415,6 +430,22 @@
 
                 UpdateBuchholz(name, GetName(true, gameID));
                 UpdateBuchholz(name, GetName(false, gameID));
+            }
+        }
+
+        public static void AddPlayerToTournament(string tournamentName, string playerName)
+        {
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+
+                using (SqlCommand addPlayerT = new SqlCommand($"INSERT INTO [{tournamentName}](Name, Rating, Score, [Sonneborn-Berger], Buchholz) VALUES(@Name, @Rating, 0, 0, 0)", connection))
+                {
+                    addPlayerT.Parameters.Add("@Name", SqlDbType.Text).Value = playerName;
+                    addPlayerT.Parameters.Add("@Rating", SqlDbType.Float).Value = GetRating(playerName);
+
+                    addPlayerT.ExecuteNonQuery();
+                }
             }
         }
 
@@ -430,10 +461,8 @@
             {
                 connection.Open();
 
-                using (SqlCommand getName = new SqlCommand($"SELECT {(side ? "White" : "Black")} FROM Game WHERE Id=@ID", connection))
+                using (SqlCommand getName = new SqlCommand($"SELECT {(side ? "White" : "Black")} FROM Game WHERE Id={id}", connection))
                 {
-                    getName.Parameters.Add("@ID", SqlDbType.Int).Value = id;
-
                     return getName.ExecuteScalar().ToString();
                 }
             }
@@ -454,7 +483,13 @@
                 {
                     getResult.Parameters.Add("@ID", SqlDbType.Int).Value = id;
 
-                    return (bool?)getResult.ExecuteScalar();
+                    var res = getResult.ExecuteScalar();
+
+                    if (res == DBNull.Value)
+                    {
+                        return null;
+                    }
+                    return (bool)res;
                 }
             }
         }
@@ -485,11 +520,11 @@
         /// <summary>
         /// Updates a player's score in a tournament.
         /// </summary>
-        /// <param name="name">The tournament's name.</param>
+        /// <param name="tournamentName">The tournament's name.</param>
         /// <param name="id">The player's ID.</param>
         /// <param name="side">The player's colour in the game. True = white, False = black.</param>
         /// <param name="result">Result of the game. True = white won, False = black won, Null = draw.</param>
-        public static void UpdateScore(string name, int id, bool side, bool? result)
+        public static void UpdateScore(string tournamentName, string playerName, bool side, bool? result)
         {
             double increment = 0;
 
@@ -499,36 +534,55 @@
                 increment = 0.5;
             }
 
-            // White
-            else if (side)
+            // Won as White
+            if (side && result == true)
             {
-                // Won
-                if (result == true)
-                {
-                    increment = 1;
-                }
+                increment = 1;
             }
-            // Black
-            else
+
+            // Won as Black
+            else if (!side && result == false)
             {
-                // Won
-                if (result == false)
-                {
-                    increment = 1;
-                }
+                increment = 1;
             }
 
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
                 connection.Open();
 
-                using (SqlCommand incScore = new SqlCommand("UPDATE @Name SET Score=Score + @Increment WHERE Id=@ID", connection))
+                using (SqlCommand incScore = new SqlCommand($"UPDATE [{tournamentName}] SET Score= Score + @Increment WHERE Name LIKE @Name", connection))
                 {
-                    incScore.Parameters.Add("@Name", SqlDbType.Text).Value = name;
                     incScore.Parameters.Add("@Increment", SqlDbType.Float).Value = increment;
-                    incScore.Parameters.Add("@ID", SqlDbType.Int).Value = id;
+                    incScore.Parameters.Add("@Name", SqlDbType.Text).Value = playerName;
 
                     incScore.ExecuteNonQuery();
+                }
+            }
+        }
+
+        /// <summary>
+        /// Gets the score of a player in a tournament.
+        /// </summary>
+        /// <param name="tournamentName">The tournament's name.</param>
+        /// <param name="playerName">The player's name.</param>
+        public static double? GetTournamentScore(string tournamentName, string playerName)
+        {
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+
+                using (SqlCommand getTScore = new SqlCommand($"SELECT Score FROM [{tournamentName}] WHERE Name LIKE @Name", connection))
+                {
+                    getTScore.Parameters.Add("@Name", SqlDbType.Text).Value = playerName;
+
+                    var res = getTScore.ExecuteScalar();
+
+                    if (res == DBNull.Value)
+                    {
+                        return null;
+                    }
+
+                    return (double)res;
                 }
             }
         }
@@ -559,9 +613,8 @@
             {
                 connection.Open();
 
-                using (SqlCommand updateSB = new SqlCommand("UPDATE @TName SET Sonnenborn-Berger=@Score WHERE Name=@Player", connection))
+                using (SqlCommand updateSB = new SqlCommand($"UPDATE [{tournamentName}] SET [Sonneborn-Berger]=@Score WHERE Name LIKE @Player", connection))
                 {
-                    updateSB.Parameters.Add("@TName", SqlDbType.Text).Value = tournamentName;
                     updateSB.Parameters.Add("@Score", SqlDbType.Float).Value = SB;
                     updateSB.Parameters.Add("@Player", SqlDbType.Text).Value = playerName;
 
@@ -593,9 +646,8 @@
             {
                 connection.Open();
 
-                using (SqlCommand updateSB = new SqlCommand("UPDATE @TName SET Buchholz=@Score WHERE Name=@Player", connection))
+                using (SqlCommand updateSB = new SqlCommand($"UPDATE [{tournamentName}] SET Buchholz=@Score WHERE Name LIKE @Player", connection))
                 {
-                    updateSB.Parameters.Add("@TName", SqlDbType.Text).Value = tournamentName;
                     updateSB.Parameters.Add("@Score", SqlDbType.Float).Value = score;
                     updateSB.Parameters.Add("@Player", SqlDbType.Text).Value = playerName;
 
@@ -615,32 +667,52 @@
         public static double GetOpponentScores(string tournamentName, string playerName, bool side, bool? result)
         {
             double score = 0;
+            Dictionary<string, double> oppcount = new Dictionary<string, double>();
 
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
                 connection.Open();
 
-                using (SqlCommand getOpp = new SqlCommand($"SELECT {(side ? "Black" : "White")} FROM Game WHERE {(side ? "White" : "Black")}=@Player AND Result=@Result", connection))
+                using (SqlCommand getOpp = new SqlCommand($"SELECT {(side ? "Black" : "White")} FROM Game WHERE {(side ? "White" : "Black")} LIKE @Player AND Result=@Result", connection))
                 {
                     getOpp.Parameters.Add("@Player", SqlDbType.Text).Value = playerName;
-                    getOpp.Parameters.Add("@Result", SqlDbType.Bit).Value = result;
-
+                    if (result == null)
+                    {
+                        getOpp.Parameters.Add("@Result", SqlDbType.Bit).Value = DBNull.Value;
+                    }
+                    else
+                    {
+                        getOpp.Parameters.Add("@Result", SqlDbType.Bit).Value = result;
+                    }
                     SqlDataReader rdr = getOpp.ExecuteReader();
                     while (rdr.Read())
                     {
-                        string opponent = rdr[(side ? "Black" : "White")].ToString();
-                        using (SqlCommand getOppScore = new SqlCommand("SELECT Score FROM @TName WHERE Name=@OppName", connection))
+                        string opp = rdr[(side ? "Black" : "White")].ToString();
+                        if (!oppcount.ContainsKey(opp))
                         {
-                            getOppScore.Parameters.Add("@TName", SqlDbType.Text).Value = tournamentName;
-                            getOppScore.Parameters.Add("@OppName", SqlDbType.Text).Value = opponent;
-
-                            score += (double)getOppScore.ExecuteScalar(); 
+                            oppcount.Add(opp, 1);
                         }
+                        else
+                        {
+                            oppcount[opp]++;
+                        }
+                    }
+                    rdr.Close();
+                }
+
+                foreach (string opponent in oppcount.Keys.ToList())
+                {
+                    using (SqlCommand getOppScore = new SqlCommand($"SELECT Score FROM [{tournamentName}] WHERE Name LIKE @OppName", connection))
+                    {
+                        getOppScore.Parameters.Add("@OppName", SqlDbType.Text).Value = opponent;
+
+                        score += oppcount[opponent] * (double)getOppScore.ExecuteScalar();
                     }
                 }
             }
 
             return score;
         }
+        
     }
 }
