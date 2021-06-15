@@ -412,6 +412,9 @@
                 // Update tiebreakers
                 UpdateSB(name, GetName(true, gameID));
                 UpdateSB(name, GetName(false, gameID));
+
+                UpdateBuchholz(name, GetName(true, gameID));
+                UpdateBuchholz(name, GetName(false, gameID));
             }
         }
 
@@ -530,20 +533,25 @@
             }
         }
 
+        /// <summary>
+        /// Updates a player's Sonneborn-Berger score.
+        /// </summary>
+        /// <param name="tournamentName">The tournament's name.</param>
+        /// <param name="playerName">The player's name.</param>
         public static void UpdateSB(string tournamentName, string playerName)
         {
             double winscore = 0;
             double drawscore = 0;
 
             // White + Win
-            winscore += GetOpponentScoresForSB(tournamentName, playerName, true, true);
+            winscore += GetOpponentScores(tournamentName, playerName, true, true);
             // Black + Win
-            winscore += GetOpponentScoresForSB(tournamentName, playerName, false, true);
+            winscore += GetOpponentScores(tournamentName, playerName, false, true);
 
             // White + Draw
-            drawscore += GetOpponentScoresForSB(tournamentName, playerName, true, null);
+            drawscore += GetOpponentScores(tournamentName, playerName, true, null);
             // Black + Draw
-            drawscore += GetOpponentScoresForSB(tournamentName, playerName, false, null);
+            drawscore += GetOpponentScores(tournamentName, playerName, false, null);
 
             double SB = winscore + (double)(decimal.Divide((decimal)drawscore, 2));
 
@@ -562,19 +570,24 @@
             }
         }
 
+        /// <summary>
+        /// Updates a player's Buchholz System score.
+        /// </summary>
+        /// <param name="tournamentName">The tournament's name.</param>
+        /// <param name="playerName">The player's name.</param>
         public static void UpdateBuchholz(string tournamentName, string playerName)
         {
             double score = 0;
 
             // White + Win
-            score += GetOpponentScoresForSB(tournamentName, playerName, true, true);
+            score += GetOpponentScores(tournamentName, playerName, true, true);
             // Black + Win
-            score += GetOpponentScoresForSB(tournamentName, playerName, false, true);
+            score += GetOpponentScores(tournamentName, playerName, false, true);
 
             // White + Draw
-            score += GetOpponentScoresForSB(tournamentName, playerName, true, null);
+            score += GetOpponentScores(tournamentName, playerName, true, null);
             // Black + Draw
-            score += GetOpponentScoresForSB(tournamentName, playerName, false, null);
+            score += GetOpponentScores(tournamentName, playerName, false, null);
 
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
@@ -591,7 +604,15 @@
             }
         }
 
-        public static double GetOpponentScoresForSB(string tournamentName, string playerName, bool side, bool? result)
+        /// <summary>
+        /// Gets the sum of opponent scores. Used in SB and Buchholz calculations.
+        /// </summary>
+        /// <param name="tournamentName">The tournament's name.</param>
+        /// <param name="playerName">The player's name.</param>
+        /// <param name="side">The player's colour in the game. True = White, False = Black.</param>
+        /// <param name="result">The result of the game. True = White won, False = Black won, Null = draw.</param>
+        /// <returns></returns>
+        public static double GetOpponentScores(string tournamentName, string playerName, bool side, bool? result)
         {
             double score = 0;
 
