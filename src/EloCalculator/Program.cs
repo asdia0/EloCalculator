@@ -19,17 +19,10 @@
 
         public static void Main(string[] args)
         {
-            AddTournament("epic tournament");
-            NewGame("a", "b", true, DateTime.Now, true);
-            NewGame("c", "d", false, DateTime.Now, true);
-            NewGame("a", "d", null, DateTime.Now, true);
-            NewGame("b", "c", true, DateTime.Now, true);
-            AddPlayerToTournament("epic tournament", "a");
-            AddPlayerToTournament("epic tournament", "b");
-            AddPlayerToTournament("epic tournament", "c");
-            AddPlayerToTournament("epic tournament", "d");
-
-            AddTournamentRound("epic tournament", 1, new List<int> { 134, 135, 136, 137});
+            foreach ((string, double) elem in GetGlobalRankings())
+            {
+                Console.WriteLine(elem);
+            }
         }
 
         /// <summary>
@@ -714,5 +707,38 @@
             return score;
         }
         
+        public static List<string> GetGlobalPlayers()
+        {
+            List<string> res = new List<string>();
+
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+
+                using (SqlCommand getInfo = new SqlCommand("SELECT Name FROM Player", connection))
+                {
+                    var rdr = getInfo.ExecuteReader();
+
+                    while (rdr.Read())
+                    {
+                        res.Add(rdr["Name"].ToString());
+                    }
+                }
+            }
+
+            return res;
+        }
+
+        public static List<(string, double)> GetGlobalRankings()
+        {
+            List<(string, double)> res = new List<(string, double)>();
+
+            foreach (string name in GetGlobalPlayers())
+            {
+                res.Add((name, GetRating(name)));
+            }
+
+            return res.OrderByDescending(t => t.Item2).ToList();
+        }
     }
 }
