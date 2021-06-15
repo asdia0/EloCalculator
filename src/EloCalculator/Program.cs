@@ -19,7 +19,22 @@
 
         public static void Main(string[] args)
         {
-            foreach ((string, double) elem in GetGlobalRankings())
+            //ConfigureDB();
+            //NewGame("a", "b", true, DateTime.Now, true);
+            //NewGame("c", "d", false, DateTime.Now, true);
+            //NewGame("a", "d", null, DateTime.Now, true);
+            //NewGame("b", "c", true, DateTime.Now, true);
+
+            //AddTournament("epic tournament");
+            //AddPlayerToTournament("epic tournament", "a");
+            //AddPlayerToTournament("epic tournament", "b");
+            //AddPlayerToTournament("epic tournament", "c");
+            //AddPlayerToTournament("epic tournament", "d");
+
+            AddTournamentRound("epic tournament", 1, new List<int> { 1, 2 });
+            AddTournamentRound("epic tournament", 2, new List<int> { 3, 4 });
+
+            foreach ((string, double, double, double) elem in GetTournamentRankings("epic tournament"))
             {
                 Console.WriteLine(elem);
             }
@@ -394,7 +409,7 @@
             {
                 connection.Open();
 
-                using (SqlCommand addTournament = new SqlCommand($"CREATE TABLE [dbo].[{name}] ( [Id] INT NOT NULL IDENTITY(1,1) PRIMARY KEY, [Name] TEXT NOT NULL, [Rating] FLOAT NOT NULL, [Score] FLOAT NOT NULL, [Sonneborn-Berger] FLOAT NOT NULL, [Buchholz] FLOAT NOT NULL);", connection))
+                using (SqlCommand addTournament = new SqlCommand($"CREATE TABLE [dbo].[{name}] ( [Id] INT NOT NULL IDENTITY(1,1) PRIMARY KEY, [Name] TEXT NOT NULL, [Score] FLOAT NOT NULL, [Sonneborn-Berger] FLOAT NOT NULL, [Buchholz] FLOAT NOT NULL);", connection))
                 {
                     addTournament.ExecuteNonQuery();
                 }
@@ -416,26 +431,31 @@
                 // Update scores
                 UpdateScore(name, GetName(true, gameID), true, GetResult(gameID));
                 UpdateScore(name, GetName(false, gameID), false, GetResult(gameID));
+            }
 
-                // Update tiebreakers
-                UpdateSB(name, GetName(true, gameID));
-                UpdateSB(name, GetName(false, gameID));
+            // Update tiebreakers
+            foreach (string player in GetTournamentPlayers(name))
+            {
+                UpdateSB(name, player);
 
-                UpdateBuchholz(name, GetName(true, gameID));
-                UpdateBuchholz(name, GetName(false, gameID));
+                UpdateBuchholz(name, player);
             }
         }
 
+        /// <summary>
+        /// Adds a player to a tournament.
+        /// </summary>
+        /// <param name="tournamentName">The tournament's name.</param>
+        /// <param name="playerName">The player's name.</param>
         public static void AddPlayerToTournament(string tournamentName, string playerName)
         {
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
                 connection.Open();
 
-                using (SqlCommand addPlayerT = new SqlCommand($"INSERT INTO [{tournamentName}](Name, Rating, Score, [Sonneborn-Berger], Buchholz) VALUES(@Name, @Rating, 0, 0, 0)", connection))
+                using (SqlCommand addPlayerT = new SqlCommand($"INSERT INTO [{tournamentName}](Name, Score, [Sonneborn-Berger], Buchholz) VALUES(@Name, 0, 0, 0)", connection))
                 {
                     addPlayerT.Parameters.Add("@Name", SqlDbType.Text).Value = playerName;
-                    addPlayerT.Parameters.Add("@Rating", SqlDbType.Float).Value = GetRating(playerName);
 
                     addPlayerT.ExecuteNonQuery();
                 }
@@ -558,7 +578,7 @@
         /// </summary>
         /// <param name="tournamentName">The tournament's name.</param>
         /// <param name="playerName">The player's name.</param>
-        public static double? GetTournamentScore(string tournamentName, string playerName)
+        public static double GetTournamentScore(string tournamentName, string playerName)
         {
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
@@ -572,7 +592,7 @@
 
                     if (res == DBNull.Value)
                     {
-                        return null;
+                        return 0;
                     }
 
                     return (double)res;
@@ -592,21 +612,23 @@
 
             // White + Win
             winscore += GetOpponentScores(tournamentName, playerName, true, true);
+
             // Black + Win
-            winscore += GetOpponentScores(tournamentName, playerName, false, true);
+            winscore += GetOpponentScores(tournamentName, playerName, false, false);
 
             // White + Draw
             drawscore += GetOpponentScores(tournamentName, playerName, true, null);
+            
             // Black + Draw
             drawscore += GetOpponentScores(tournamentName, playerName, false, null);
 
-            double SB = winscore + (double)(decimal.Divide((decimal)drawscore, 2));
+            double SB = winscore + drawscore / 2;
 
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
                 connection.Open();
 
-                using (SqlCommand updateSB = new SqlCommand($"UPDATE [{tournamentName}] SET [Sonneborn-Berger]=@Score WHERE Name LIKE @Player", connection))
+                using (SqlCommand updateSB = new SqlCommand($"UPDATE [{tournamentName}] SET [Sonneborn-Berger] = @Score WHERE Name LIKE @Player", connection))
                 {
                     updateSB.Parameters.Add("@Score", SqlDbType.Float).Value = SB;
                     updateSB.Parameters.Add("@Player", SqlDbType.Text).Value = playerName;
@@ -628,12 +650,17 @@
             // White + Win
             score += GetOpponentScores(tournamentName, playerName, true, true);
             // Black + Win
-            score += GetOpponentScores(tournamentName, playerName, false, true);
+            score += GetOpponentScores(tournamentName, playerName, false, false);
 
             // White + Draw
             score += GetOpponentScores(tournamentName, playerName, true, null);
             // Black + Draw
             score += GetOpponentScores(tournamentName, playerName, false, null);
+
+            // White + Loss
+            score += GetOpponentScores(tournamentName, playerName, true, false);
+            // Black + Loss
+            score += GetOpponentScores(tournamentName, playerName, false, true);
 
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
@@ -659,54 +686,47 @@
         /// <returns></returns>
         public static double GetOpponentScores(string tournamentName, string playerName, bool side, bool? result)
         {
-            double score = 0;
-            Dictionary<string, double> oppcount = new Dictionary<string, double>();
+            double sum = 0;
 
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
                 connection.Open();
 
-                using (SqlCommand getOpp = new SqlCommand($"SELECT {(side ? "Black" : "White")} FROM Game WHERE {(side ? "White" : "Black")} LIKE @Player AND Result=@Result", connection))
+                string commandText = string.Empty;
+
+                if (result == null)
                 {
-                    getOpp.Parameters.Add("@Player", SqlDbType.Text).Value = playerName;
-                    if (result == null)
-                    {
-                        getOpp.Parameters.Add("@Result", SqlDbType.Bit).Value = DBNull.Value;
-                    }
-                    else
-                    {
-                        getOpp.Parameters.Add("@Result", SqlDbType.Bit).Value = result;
-                    }
-                    SqlDataReader rdr = getOpp.ExecuteReader();
+                    commandText = $"SELECT {(side ? "Black" : "White")} FROM Game WHERE {(side ? "White" : "Black")} LIKE @Player AND TournamentName LIKE @TName AND Result IS NULL";
+                }
+                else
+                {
+                    commandText = $"SELECT {(side ? "Black" : "White")} FROM Game WHERE {(side ? "White" : "Black")} LIKE @Player AND TournamentName LIKE @TName AND Result={((bool)result ? 1 : 0)}";
+                }
+
+                using (SqlCommand getOpponents = new SqlCommand(commandText, connection))
+                {
+                    getOpponents.Parameters.Add("@Player", SqlDbType.Text).Value = playerName;
+                    getOpponents.Parameters.Add("@TName", SqlDbType.Text).Value = tournamentName;
+
+                    var rdr = getOpponents.ExecuteReader();
+
                     while (rdr.Read())
                     {
                         string opp = rdr[(side ? "Black" : "White")].ToString();
-                        if (!oppcount.ContainsKey(opp))
-                        {
-                            oppcount.Add(opp, 1);
-                        }
-                        else
-                        {
-                            oppcount[opp]++;
-                        }
+                        sum += GetTournamentScore(tournamentName, opp);
                     }
+
                     rdr.Close();
-                }
-
-                foreach (string opponent in oppcount.Keys.ToList())
-                {
-                    using (SqlCommand getOppScore = new SqlCommand($"SELECT Score FROM [{tournamentName}] WHERE Name LIKE @OppName", connection))
-                    {
-                        getOppScore.Parameters.Add("@OppName", SqlDbType.Text).Value = opponent;
-
-                        score += oppcount[opponent] * (double)getOppScore.ExecuteScalar();
-                    }
                 }
             }
 
-            return score;
+            return sum;
         }
         
+        /// <summary>
+        /// Gets the list of all players.
+        /// </summary>
+        /// <returns></returns>
         public static List<string> GetGlobalPlayers()
         {
             List<string> res = new List<string>();
@@ -729,6 +749,10 @@
             return res;
         }
 
+        /// <summary>
+        /// Gets the global rankings.
+        /// </summary>
+        /// <returns>A ist of tuples. Format: (name, rating)</returns>
         public static List<(string, double)> GetGlobalRankings()
         {
             List<(string, double)> res = new List<(string, double)>();
@@ -739,6 +763,92 @@
             }
 
             return res.OrderByDescending(t => t.Item2).ToList();
+        }
+
+        /// <summary>
+        /// Gets a list of players in a tournament.
+        /// </summary>
+        /// <param name="name">The tournament's name.</param>
+        /// <returns></returns>
+        public static List<string> GetTournamentPlayers(string name)
+        {
+            List<string> res = new List<string>();
+
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+
+                using (SqlCommand getInfo = new SqlCommand($"SELECT Name FROM [{name}]", connection))
+                {
+                    var rdr = getInfo.ExecuteReader();
+
+                    while (rdr.Read())
+                    {
+                        res.Add(rdr["Name"].ToString());
+                    }
+                }
+            }
+
+            return res;
+        }
+
+        /// <summary>
+        /// Gets the rankings of a tournament.
+        /// </summary>
+        /// <param name="name">The tournament's name.</param>
+        /// <returns>A ist of tuples. Format: (name, score, SB score, Buchholz score)</returns>
+        public static List<(string, double, double, double)> GetTournamentRankings(string name)
+        {
+            List<(string, double, double, double)> res = new List<(string, double, double, double)>();
+
+            foreach (string playerName in GetTournamentPlayers(name))
+            {
+                res.Add((playerName, GetTournamentScore(name, playerName), GetSB(name, playerName), GetBuchholz(name, playerName)));
+            }
+
+            return res.OrderByDescending(t => t.Item2).ThenByDescending(t => t.Item3).ThenByDescending(t => t.Item4).ToList();
+        }
+
+        /// <summary>
+        /// Gets a player's Sonneborn-Berger score in a tournament.
+        /// </summary>
+        /// <param name="tournamentName">The tournament's name.</param>
+        /// <param name="playerName">The player's name.</param>
+        /// <returns></returns>
+        public static double GetSB(string tournamentName, string playerName)
+        {
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+
+                using (SqlCommand getSB = new SqlCommand($"SELECT [Sonneborn-Berger] FROM [{tournamentName}] WHERE Name LIKE @Name", connection))
+                {
+                    getSB.Parameters.Add("@Name", SqlDbType.Text).Value = playerName;
+
+                    return (double)getSB.ExecuteScalar();
+                }
+            }
+        }
+
+        /// <summary>
+        /// Gets a player's Buchholz score in a tournament.
+        /// </summary>
+        /// <param name="tournamentName">The tournament's name.</param>
+        /// <param name="playerName">The player's name.</param>
+        /// <returns></returns>
+        public static double GetBuchholz(string tournamentName, string playerName)
+        {
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+
+                using (SqlCommand getBuchholz = new SqlCommand($"SELECT Buchholz FROM [{tournamentName}] WHERE Name LIKE @Name", connection))
+                {
+                    getBuchholz.Parameters.Add("@Name", SqlDbType.Text).Value = playerName;
+
+                    return (double)getBuchholz.ExecuteScalar();
+                }
+            }
         }
     }
 }
