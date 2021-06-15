@@ -1,10 +1,10 @@
 # EloCalculator
 
 ## Features
-- Elo calculator (duh)
-- Tiebreaker calculator
-- Global/Tournament leaderboard
-- Tournament pairing
+- [x] Elo calculator (duh)
+- [ ] Tiebreaker calculator
+- [ ] Global/Tournament leaderboard
+- [ ] Tournament pairing
 
 ## Usage
 1. Create a SQL database.
