@@ -31,10 +31,10 @@
             //AddPlayerToTournament("epic tournament", "c");
             //AddPlayerToTournament("epic tournament", "d");
 
-            AddTournamentRound("epic tournament", 1, new List<int> { 1, 2 });
-            AddTournamentRound("epic tournament", 2, new List<int> { 3, 4 });
+            //AddTournamentRound("epic tournament", 1, new List<int> { 1, 2 });
+            //AddTournamentRound("epic tournament", 2, new List<int> { 3, 4 });
 
-            foreach ((string, double, double, double) elem in GetTournamentRankings("epic tournament"))
+            foreach (var elem in GetPairings("epic tournament"))
             {
                 Console.WriteLine(elem);
             }
@@ -847,6 +847,133 @@
                     getBuchholz.Parameters.Add("@Name", SqlDbType.Text).Value = playerName;
 
                     return (double)getBuchholz.ExecuteScalar();
+                }
+            }
+        }
+
+        /// <summary>
+        /// Gets a list of players by their tournament ranking.
+        /// </summary>
+        /// <param name="tournamentName">The tournament's name.</param>
+        /// <returns></returns>
+        public static List<string> GetPlayersByRanking(string tournamentName)
+        {
+            List<string> res = new List<string>();
+
+            foreach (var elem in GetTournamentRankings(tournamentName))
+            {
+                res.Add(elem.Item1);
+            }
+
+            return res;
+        }
+
+        /// <summary>
+        /// Gets a list of tournament pairings for the next round.
+        /// </summary>
+        /// <param name="tournamentName">The tournament's name.</param>
+        /// <returns>A list of (string, string?) tuples. Format: (White, Black). If Black is null that means White has a bye.</returns>
+        public static List<(string, string?)> GetPairings(string tournamentName)
+        {
+            List<string> players = GetPlayersByRanking(tournamentName);
+
+            List<(string, string?)> res = new List<(string, string?)>();
+            
+            for (int i = 0; i < Math.Floor(decimal.Divide(players.Count, 2)); i++)
+            {
+                string white = players[2 * i];
+                string black = players[2 * i + 1];
+
+                int whiteBlackID = GetLatestGameFromTournament(tournamentName, white, black);
+                int blackWhiteID = GetLatestGameFromTournament(tournamentName, black, white);
+                
+                // did not play white-black
+                if (whiteBlackID == 0)
+                {
+                    res.Add((white, black));
+                    continue;
+                }
+                // did not play black-white
+                if (blackWhiteID == 0)
+                {
+                    res.Add((black, white));
+                    continue;
+                }
+
+                DateTime whiteBlack = GetDateTimeFromGame(whiteBlackID);
+                DateTime blackWhite = GetDateTimeFromGame(blackWhiteID);
+
+                // latest game was black-white; new game should be white-black
+                if (whiteBlack.CompareTo(blackWhite) <= 0)
+                {
+                    res.Add((white, black));
+                }
+                // latest game was white-black; new game should be black-white
+                else
+                {
+                    res.Add((black, white));
+                }
+            }
+
+            return res;
+        }
+
+        /// <summary>
+        /// Gets the latest game from a tournament between two players.
+        /// </summary>
+        /// <param name="tournamentName">The tournament's name.</param>
+        /// <param name="white">White's name.</param>
+        /// <param name="black">Black's name.</param>
+        /// <returns>The game ID in the database.</returns>
+        public static int GetLatestGameFromTournament(string tournamentName, string white, string black)
+        {
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+
+                using (SqlCommand getLatestGame = new SqlCommand("SELECT Id FROM Game WHERE TournamentName LIKE @TName AND White LIKE @White AND Black LIKE @Black", connection))
+                {
+                    getLatestGame.Parameters.Add("@TName", SqlDbType.Text).Value = tournamentName;
+                    getLatestGame.Parameters.Add("@White", SqlDbType.Text).Value = white;
+                    getLatestGame.Parameters.Add("@Black", SqlDbType.Text).Value = black;
+
+                    var rdr = getLatestGame.ExecuteReader();
+
+                    int latestGameID = 0;
+
+                    while (rdr.Read())
+                    {
+                        int id = (int)rdr["Id"];
+
+                        if (id > latestGameID)
+                        {
+                            latestGameID = id;
+                        }
+                    }
+
+                    rdr.Close();
+
+                    return latestGameID;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Gets the datetime of a game.
+        /// </summary>
+        /// <param name="id">The game's ID.</param>
+        /// <returns></returns>
+        public static DateTime GetDateTimeFromGame(int id)
+        {
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+
+                using (SqlCommand getDT = new SqlCommand("SELECT DateTime FROM Game WHERE Id=@ID", connection))
+                {
+                    getDT.Parameters.Add("@ID", SqlDbType.Int).Value = id;
+
+                    return (DateTime)getDT.ExecuteScalar();
                 }
             }
         }
