@@ -6,6 +6,7 @@
     using System.Data;
     using System.Data.SqlClient;
     using System.Linq;
+    using System.IO;
 
     public class Program
     {
@@ -33,6 +34,8 @@
 
             //AddTournamentRound("epic tournament", 1, new List<int> { 1, 2 });
             //AddTournamentRound("epic tournament", 2, new List<int> { 3, 4 });
+
+            InputFromCSV(@"C:\Users\eytan\OneDrive\Desktop\stuff\test.csv");
 
             foreach (var elem in GetPairings("epic tournament"))
             {
@@ -417,21 +420,18 @@
         }
 
         /// <summary>
-        /// Adds a new round to the tournament. THIS SHOULD ONLY BE CALLED ONCE PER ROUND.
+        /// Adds new games to a tournament.
         /// </summary>
         /// <param name="name">The tournament's name.</param>
-        /// <param name="games">The games played that round.</param>
-        public static void AddTournamentRound(string name, int round, List<int> games)
+        /// <param name="gameID">The games to add.</param>
+        public static void AddGameToTournament(string name, int round, int gameID)
         {
-            foreach (int gameID in games)
-            {
-                // Update game info
-                AddTournamentInfoToGame(gameID, name, round);
+            // Update game info
+            AddTournamentInfoToGame(gameID, name, round);
 
-                // Update scores
-                UpdateScore(name, GetName(true, gameID), true, GetResult(gameID));
-                UpdateScore(name, GetName(false, gameID), false, GetResult(gameID));
-            }
+            // Update scores
+            UpdateScore(name, GetName(true, gameID), true, GetResult(gameID));
+            UpdateScore(name, GetName(false, gameID), false, GetResult(gameID));
 
             // Update tiebreakers
             foreach (string player in GetTournamentPlayers(name))
@@ -974,6 +974,72 @@
                     getDT.Parameters.Add("@ID", SqlDbType.Int).Value = id;
 
                     return (DateTime)getDT.ExecuteScalar();
+                }
+            }
+        }
+
+        /// <summary>
+        /// Adds new games from a file.
+        /// </summary>
+        /// <param name="path"></param>
+        public static void InputFromCSV(string path)
+        {
+            string raw = File.ReadAllText(path);
+
+            string[] lines = raw.Split("\n");
+
+            foreach (string line in lines)
+            {
+                string[] fields = line.Split(",");
+
+                if (fields.Length == 1)
+                {
+                    continue;
+                }
+
+                /*
+                 * 0: White
+                 * 1: Black
+                 * 2: Result
+                 * 3: DateTime
+                 * 4: Rated
+                 * 5: TournamentName
+                 * 6: TournamentRound
+                 */
+
+                Dictionary<string, bool?> boolD = new Dictionary<string, bool?>
+                {
+                    { "0", false },
+                    { "1", true },
+                    { string.Empty, null },
+                };
+
+                NewGame(fields[0], fields[1], boolD[fields[2]], DateTime.Parse(fields[3]), (bool)boolD[fields[4]]);
+
+                if (fields.Length > 5)
+                {
+                    // if tournament already exists
+                    if (TableExists(fields[5]))
+                    {
+                        AddGameToTournament(fields[5], int.Parse(fields[6]), GetIDOfLastGame());
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// Gets the ID of the last game in the database.
+        /// </summary>
+        /// <returns></returns>
+        public static int GetIDOfLastGame()
+        {
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+
+                using (SqlCommand getID = new SqlCommand("SELECT TOP 1 Id FROM Game ORDER BY Id DESC", connection))
+                {
+                    return (int)getID.ExecuteScalar();
                 }
             }
         }
