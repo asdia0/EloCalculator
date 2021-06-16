@@ -4,7 +4,7 @@
 - [x] Elo calculator (duh)
 - [x] Tiebreaker calculator
 - [X] Global/Tournament leaderboard
-- [ ] Tournament pairing
+- [X] Tournament pairing
 
 ## Usage
 1. Create a SQL database.
