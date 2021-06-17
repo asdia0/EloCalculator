@@ -20,6 +20,64 @@
 
         public static void Main(string[] args)
         {
+            foreach (var item in GetGlobalRankings())
+            {
+                Console.WriteLine(item);
+            }
+        }
+
+        public static void RemakeRatings(float newRating)
+        {
+            ResetPlayerRating(newRating);
+
+            for (int gameID = 1; gameID <= GetIDOfLastGame(); gameID++)
+            {
+                if (GameIsRated(gameID))
+                {
+                    string white = GetName(true, gameID), black = GetName(false, gameID);
+
+                    // get player ratings
+                    (double whiteRating, double blackRating) = CalculateRating(GetRating(white), GetRating(black), GetResult(gameID));
+
+                    // update player ratings
+                    UpdatePlayerRatings(white, whiteRating);
+                    UpdatePlayerRatings(black, blackRating);
+                }
+            }
+        }
+
+        public static bool GameIsRated(int id)
+        {
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+
+                using (SqlCommand isRated = new SqlCommand("SELECT Rated FROM Game WHERE Id=@ID", connection))
+                {
+                    isRated.Parameters.Add("@ID", SqlDbType.Int).Value = id;
+
+                    return (bool)isRated.ExecuteScalar();
+                }
+            }
+        }
+
+        public static void ResetPlayerRating(float newRating)
+        {
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+
+                foreach (string player in GetGlobalPlayers())
+                {
+                    using (SqlCommand resetPlayerRating = new SqlCommand("UPDATE Player SET Rating=@Rating WHERE Name LIKE @Name", connection))
+                    {
+                        resetPlayerRating.Parameters.Add("@Rating", SqlDbType.Float).Value = newRating;
+                        resetPlayerRating.Parameters.Add("@Name", SqlDbType.Text).Value = player;
+
+                        resetPlayerRating.ExecuteNonQuery();
+                    }
+                }
+            }
         }
 
         public static void AddPlayerIfNotInDB(string name)
