@@ -37,8 +37,6 @@
             //AddGameToTournament("epic tournament", 2, 3);
             //AddGameToTournament("epic tournament", 2, 4);
 
-            //InputFromCSV(@"C:\Users\eytan\OneDrive\Desktop\stuff\test.csv");
-
             //foreach (var elem in GetPairings("epic tournament"))
             //{
             //    Console.WriteLine(elem);
@@ -1047,6 +1045,12 @@
             }
         }
 
+        /// <summary>
+        /// Gets a player's status in a tournament.
+        /// </summary>
+        /// <param name="tournamentName">The tournament's name.</param>
+        /// <param name="playerName">The player's name.</param>
+        /// <returns></returns>
         public static bool GetPlayerActivty(string tournamentName, string playerName)
         {
             using (SqlConnection connection = new SqlConnection(connectionString))
@@ -1062,6 +1066,11 @@
             }
         }
 
+        /// <summary>
+        /// Gets the rankings of active players in a tournament.
+        /// </summary>
+        /// <param name="tournamentName">The tournament's name.</param>
+        /// <returns></returns>
         public static List<string> GetActivePlayersByRanking(string tournamentName)
         {
             List<string> players = GetPlayersByRanking(tournamentName);
