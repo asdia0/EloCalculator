@@ -20,27 +20,23 @@
 
         public static void Main(string[] args)
         {
-            //ConfigureDB();
-            //NewGame("a", "b", true, DateTime.Now, true);
-            //NewGame("c", "d", false, DateTime.Now, true);
-            //NewGame("a", "d", null, DateTime.Now, true);
-            //NewGame("b", "c", true, DateTime.Now, true);
+        }
 
-            //AddTournament("epic tournament");
-            //AddPlayerToTournament("epic tournament", "a", true);
-            //AddPlayerToTournament("epic tournament", "b", true);
-            //AddPlayerToTournament("epic tournament", "c", true);
-            //AddPlayerToTournament("epic tournament", "d", true);
+        public static void AddPlayerIfNotInDB(string name)
+        {
+            if (GetID(name) == 0)
+            {
+                AddPlayer(name);
+            }
+        }
 
-            //AddGameToTournament("epic tournament", 1, 1);
-            //AddGameToTournament("epic tournament", 1, 2);
-            //AddGameToTournament("epic tournament", 2, 3);
-            //AddGameToTournament("epic tournament", 2, 4);
-
-            //foreach (var elem in GetPairings("epic tournament"))
-            //{
-            //    Console.WriteLine(elem);
-            //}
+        public static void AddPlayerIfNotInTournamentDB(string tournamentName, string playerName)
+        {
+            if (GetTournamentID(tournamentName, playerName) == 0)
+            {
+                // assumes player is active.
+                AddPlayerToTournament(tournamentName, playerName, true);
+            }
         }
 
         /// <summary>
@@ -56,6 +52,9 @@
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
                 connection.Open();
+
+                AddPlayerIfNotInDB(white);
+                AddPlayerIfNotInDB(black);
 
                 // add game
                 AddGame(white, black, result, dateTime, isRated);
@@ -144,20 +143,43 @@
         }
 
         /// <summary>
+        /// Gets a player's tournament ID.
+        /// </summary>
+        /// <param name="name">The player's name.</param>
+        /// <returns></returns>
+        public static int GetTournamentID(string tournamentName, string playerName)
+        {
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+
+                using (SqlCommand getID = new SqlCommand($"SELECT Id FROM [{tournamentName}] WHERE Name LIKE @Name", connection))
+                {
+                    getID.Parameters.Add("@Name", SqlDbType.Text).Value = playerName;
+                    var res = getID.ExecuteScalar();
+
+                    if (res == null)
+                    {
+                        return 0;
+                    }
+                    else
+                    {
+                        return (int)res;
+                    }
+                }
+            }
+        }
+
+        /// <summary>
         /// Gets the rating of the player from the database.
         /// </summary>
         /// <param name="name">The player's name.</param>
         /// <returns></returns>
         public static double GetRating(string name)
         {
+            AddPlayerIfNotInDB(name);
+
             int PlayerID = GetID(name);
-            
-            while (PlayerID == 0)
-            {
-                // will probably cause some problems later on, but who cares?
-                AddPlayer(name);
-                PlayerID = GetID(name);
-            }
 
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
@@ -426,6 +448,9 @@
         /// <param name="gameID">The games to add.</param>
         public static void AddGameToTournament(string name, int round, int gameID)
         {
+            AddPlayerIfNotInTournamentDB(name, GetName(true, gameID));
+            AddPlayerIfNotInTournamentDB(name, GetName(false, gameID));
+
             // Update game info
             AddTournamentInfoToGame(gameID, name, round);
 
@@ -1012,18 +1037,20 @@
                 {
                     { "0", false },
                     { "1", true },
-                    { string.Empty, null },
+                    { "NULL", null },
                 };
 
                 NewGame(fields[0], fields[1], boolD[fields[2]], DateTime.Parse(fields[3]), (bool)boolD[fields[4]]);
 
                 if (fields.Length > 5)
                 {
-                    // if tournament already exists
-                    if (TableExists(fields[5]))
+                    // if tournament doesnt exists
+                    if (!TableExists(fields[5]))
                     {
-                        AddGameToTournament(fields[5], int.Parse(fields[6]), GetIDOfLastGame());
+                        AddTournament(fields[5]);
                     }
+
+                    AddGameToTournament(fields[5], int.Parse(fields[6]), GetIDOfLastGame());
                 }
             }
         }
