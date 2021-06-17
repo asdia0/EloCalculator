@@ -27,20 +27,22 @@
             //NewGame("b", "c", true, DateTime.Now, true);
 
             //AddTournament("epic tournament");
-            //AddPlayerToTournament("epic tournament", "a");
-            //AddPlayerToTournament("epic tournament", "b");
-            //AddPlayerToTournament("epic tournament", "c");
-            //AddPlayerToTournament("epic tournament", "d");
+            //AddPlayerToTournament("epic tournament", "a", true);
+            //AddPlayerToTournament("epic tournament", "b", true);
+            //AddPlayerToTournament("epic tournament", "c", true);
+            //AddPlayerToTournament("epic tournament", "d", true);
 
-            //AddTournamentRound("epic tournament", 1, new List<int> { 1, 2 });
-            //AddTournamentRound("epic tournament", 2, new List<int> { 3, 4 });
+            //AddGameToTournament("epic tournament", 1, 1);
+            //AddGameToTournament("epic tournament", 1, 2);
+            //AddGameToTournament("epic tournament", 2, 3);
+            //AddGameToTournament("epic tournament", 2, 4);
 
-            InputFromCSV(@"C:\Users\eytan\OneDrive\Desktop\stuff\test.csv");
+            //InputFromCSV(@"C:\Users\eytan\OneDrive\Desktop\stuff\test.csv");
 
-            foreach (var elem in GetPairings("epic tournament"))
-            {
-                Console.WriteLine(elem);
-            }
+            //foreach (var elem in GetPairings("epic tournament"))
+            //{
+            //    Console.WriteLine(elem);
+            //}
         }
 
         /// <summary>
@@ -412,7 +414,7 @@
             {
                 connection.Open();
 
-                using (SqlCommand addTournament = new SqlCommand($"CREATE TABLE [dbo].[{name}] ( [Id] INT NOT NULL IDENTITY(1,1) PRIMARY KEY, [Name] TEXT NOT NULL, [Score] FLOAT NOT NULL, [Sonneborn-Berger] FLOAT NOT NULL, [Buchholz] FLOAT NOT NULL);", connection))
+                using (SqlCommand addTournament = new SqlCommand($"CREATE TABLE [dbo].[{name}] ( [Id] INT NOT NULL IDENTITY(1,1) PRIMARY KEY, [Name] TEXT NOT NULL, [Active] BIT NOT NULL, [Score] FLOAT NOT NULL, [Sonneborn-Berger] FLOAT NOT NULL, [Buchholz] FLOAT NOT NULL);", connection))
                 {
                     addTournament.ExecuteNonQuery();
                 }
@@ -447,15 +449,16 @@
         /// </summary>
         /// <param name="tournamentName">The tournament's name.</param>
         /// <param name="playerName">The player's name.</param>
-        public static void AddPlayerToTournament(string tournamentName, string playerName)
+        public static void AddPlayerToTournament(string tournamentName, string playerName, bool isActive)
         {
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
                 connection.Open();
 
-                using (SqlCommand addPlayerT = new SqlCommand($"INSERT INTO [{tournamentName}](Name, Score, [Sonneborn-Berger], Buchholz) VALUES(@Name, 0, 0, 0)", connection))
+                using (SqlCommand addPlayerT = new SqlCommand($"INSERT INTO [{tournamentName}](Name, Active, Score, [Sonneborn-Berger], Buchholz) VALUES(@Name, @Active, 0, 0, 0)", connection))
                 {
                     addPlayerT.Parameters.Add("@Name", SqlDbType.Text).Value = playerName;
+                    addPlayerT.Parameters.Add("@Active", SqlDbType.Bit).Value = isActive;
 
                     addPlayerT.ExecuteNonQuery();
                 }
@@ -875,7 +878,7 @@
         /// <returns>A list of (string, string?) tuples. Format: (White, Black). If Black is null that means White has a bye.</returns>
         public static List<(string, string?)> GetPairings(string tournamentName)
         {
-            List<string> players = GetPlayersByRanking(tournamentName);
+            List<string> players = GetActivePlayersByRanking(tournamentName);
 
             List<(string, string?)> res = new List<(string, string?)>();
             
@@ -1042,6 +1045,36 @@
                     return (int)getID.ExecuteScalar();
                 }
             }
+        }
+
+        public static bool GetPlayerActivty(string tournamentName, string playerName)
+        {
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+
+                using (SqlCommand getAct = new SqlCommand($"SELECT Active FROM [{tournamentName}] WHERE Name LIKE @Name", connection))
+                {
+                    getAct.Parameters.Add("@Name", SqlDbType.Text).Value = playerName;
+
+                    return (bool)getAct.ExecuteScalar();
+                }
+            }
+        }
+
+        public static List<string> GetActivePlayersByRanking(string tournamentName)
+        {
+            List<string> players = GetPlayersByRanking(tournamentName);
+
+            foreach (string player in players.ToList())
+            {
+                if (!GetPlayerActivty(tournamentName, player))
+                {
+                    players.Remove(player);
+                }
+            }
+
+            return players;
         }
     }
 }
