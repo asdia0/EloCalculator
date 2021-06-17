@@ -24,6 +24,11 @@
 
         public static void AddPlayerIfNotInDB(string name)
         {
+            if (name == "BYE")
+            {
+                return;
+            }
+
             if (GetID(name) == 0)
             {
                 AddPlayer(name);
@@ -32,6 +37,11 @@
 
         public static void AddPlayerIfNotInTournamentDB(string tournamentName, string playerName)
         {
+            if (playerName == "BYE")
+            {
+                return;
+            }
+
             if (GetTournamentID(tournamentName, playerName) == 0)
             {
                 // assumes player is active.
@@ -467,6 +477,22 @@
             }
         }
 
+        public static void AwardByeInTournament(string name, int round, int gameID)
+        {
+            AddPlayerIfNotInTournamentDB(name, GetName(true, gameID));
+
+            AddTournamentInfoToGame(gameID, name, round);
+
+            UpdateScore(name, GetName(true, gameID), true, GetResult(gameID));
+
+            foreach (string player in GetTournamentPlayers(name))
+            {
+                UpdateSB(name, player);
+
+                UpdateBuchholz(name, player);
+            }
+        }
+
         /// <summary>
         /// Adds a player to a tournament.
         /// </summary>
@@ -739,7 +765,10 @@
                     while (rdr.Read())
                     {
                         string opp = rdr[(side ? "Black" : "White")].ToString();
-                        sum += GetTournamentScore(tournamentName, opp);
+                        if (opp != "BYE")
+                        {
+                            sum += GetTournamentScore(tournamentName, opp);
+                        }
                     }
 
                     rdr.Close();
@@ -1050,7 +1079,15 @@
                         AddTournament(fields[5]);
                     }
 
-                    AddGameToTournament(fields[5], int.Parse(fields[6]), GetIDOfLastGame());
+                    if (fields[1] == "BYE")
+                    {
+                        AwardByeInTournament(fields[5], int.Parse(fields[6]), GetIDOfLastGame());
+                    }
+
+                    else
+                    {
+                        AddGameToTournament(fields[5], int.Parse(fields[6]), GetIDOfLastGame());
+                    }
                 }
             }
         }
