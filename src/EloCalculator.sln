@@ -5,7 +5,7 @@ VisualStudioVersion = 16.0.30804.86
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EloCalculator", "EloCalculator\EloCalculator.csproj", "{296A82B1-9AE3-4A4B-8B05-236D652461B2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EloCalculator.Test", "EloCalculator\Test\EloCalculator.Test.csproj", "{FF727DF7-2F25-4756-B755-A257CAEE9408}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EloCalculator.Test", "EloCalculator.Test\EloCalculator.Test.csproj", "{FF727DF7-2F25-4756-B755-A257CAEE9408}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
