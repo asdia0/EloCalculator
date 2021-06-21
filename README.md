@@ -1,14 +1,17 @@
 # EloCalculator
 
 ## Features
-- [x] Elo calculator (duh)
-- [x] Tiebreaker calculator
-- [X] Global/Tournament leaderboard
-- [X] Tournament pairing
+
+- Elo calculator (duh)
+- Tiebreaker calculator
+- Global/Tournament leaderboard
+- Tournament pairing
+- Add records from a TSV file
 
 ## Usage
+
 1. Create a SQL database.
-2. Add its connection string to [App.config](https://github.com/asdia0/EloCalculator/blob/master/src/EloCalculator/App.config).
-3. Run `Program.ConfigureDB()`.
+2. Add its connection string to [Settings.cs](https://github.com/asdia0/EloCalculator/blob/master/src/EloCalculator/Settings.cs).
+3. Run `Game.ConfigureDB()` and `Player.ConfigureDB()`.
 4. ???
 5. Profit.
