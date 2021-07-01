@@ -2,7 +2,7 @@
 
 EloCalculator is a program designed to automate Elo, Sonneborn-Berger and Buchholz calculations.
 
-An example program can be found [here](src/EloCalculator.CLI/Program.cs).
+An example program can be found [here](src/EloCalculator.Example/Program.cs).
 
 
 ## Features
