@@ -164,21 +164,32 @@
 
             foreach (string[] record in records)
             {
-                Player white = PlayerDatabase.Players[int.Parse(record[0])];
-                Player black = PlayerDatabase.Players[int.Parse(record[1])];
-                Result result = (record[2] == "NULL") ? Result.Draw : ((record[2] == "1") ? Result.White : Result.Black);
+                Result result = (record[2] == "0.5") ? Result.Draw : ((record[2] == "1") ? Result.White : Result.Black);
                 DateTime dateTime = DateTime.Parse(record[3]);
                 bool rated = (record[4] == "1") ? true : false;
 
                 if (record.Length == 5)
                 {
+                    Player white = PlayerDatabase.Players[int.Parse(record[0])];
+                    Player black = PlayerDatabase.Players[int.Parse(record[1])];
                     new Game(white, black, result, dateTime, rated);
                 }
                 else if (record.Length == 7)
                 {
                     Tournament tournament = TournamentDatabase.LoadTournament(record[5]);
                     TournamentRound round = tournament.Rounds.Where(i => i.Number == int.Parse(record[6])).First();
-                    new Game(white, black, result, dateTime, rated, tournament, round);
+                    Player white = PlayerDatabase.Players[int.Parse(record[0])];
+
+                    if (record[1] == "BYE")
+                    {
+                        tournament.Players.Where(i => i.Player == white).ToList().First().AwardBye(round);
+                    }
+                    else
+                    {
+                        Player black = PlayerDatabase.Players[int.Parse(record[1])];
+
+                        new Game(white, black, result, dateTime, rated, tournament, round);
+                    }
                 }
             }
         }
@@ -201,7 +212,7 @@
 
                     while (rdr.Read())
                     {
-                        content += $"{PlayerDatabase.Players[(int)rdr["White"]].Id} {PlayerDatabase.Players[(int)rdr["Black"]].Id}   {((rdr["Result"] == DBNull.Value) ? "NULL" : (bool)rdr["Result"] ? "1" : "0")} {(DateTime)rdr["DateTime"]} {((bool)rdr["Rated"] ? "1" : "0")}    {(rdr["TournamentName"] == DBNull.Value ? string.Empty : TournamentDatabase.Tournaments.Where(i => i.Name == (string)rdr["TournamentName"]).First().Name)} {(rdr["TournamentRound"] == DBNull.Value ? string.Empty : int.Parse((string)rdr["TournamentRound"]))}\n";
+                        content += $"{PlayerDatabase.Players[(int)rdr["White"]].Id} {PlayerDatabase.Players[(int)rdr["Black"]].Id}   {((rdr["Result"] == DBNull.Value) ? "0.5" : (bool)rdr["Result"] ? "1" : "0")} {(DateTime)rdr["DateTime"]} {((bool)rdr["Rated"] ? "1" : "0")}    {(rdr["TournamentName"] == DBNull.Value ? string.Empty : TournamentDatabase.Tournaments.Where(i => i.Name == (string)rdr["TournamentName"]).First().Name)} {(rdr["TournamentRound"] == DBNull.Value ? string.Empty : int.Parse((string)rdr["TournamentRound"]))}\n";
                     }
                 }
             }
