@@ -182,5 +182,31 @@
                 }
             }
         }
+
+        /// <summary>
+        /// Exports records to a tab-separated values (TSV) file.
+        /// </summary>
+        /// <param name="path">The path to write the records to.</param>
+        public static void ExportDatabseToTSV(string path)
+        {
+            string content = string.Empty;
+
+            using (SqlConnection connection = new SqlConnection(Settings.connectionString))
+            {
+                connection.Open();
+
+                using (SqlCommand command = new SqlCommand("SELECT * FROM Player", connection))
+                {
+                    var rdr = command.ExecuteReader();
+
+                    while (rdr.Read())
+                    {
+                        content += $"{PlayerDatabase.Players[(int)rdr["White"]].Id} {PlayerDatabase.Players[(int)rdr["Black"]].Id}   {((rdr["Result"] == DBNull.Value) ? "NULL" : (bool)rdr["Result"] ? "1" : "0")} {(DateTime)rdr["DateTime"]} {((bool)rdr["Rated"] ? "1" : "0")}    {(rdr["TournamentName"] == DBNull.Value ? string.Empty : TournamentDatabase.Tournaments.Where(i => i.Name == (string)rdr["TournamentName"]).First().Name)} {(rdr["TournamentRound"] == DBNull.Value ? string.Empty : int.Parse((string)rdr["TournamentRound"]))}\n";
+                    }
+                }
+            }
+
+            File.WriteAllText(path, content);
+        }
     }
 }
