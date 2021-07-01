@@ -26,6 +26,8 @@
         /// </summary>
         private Player _Player;
 
+        private bool _Active;
+
         /// <summary>
         /// Represents the <see cref="EloCalculator.Tournament"/> the <see cref="TournamentPlayer"/> took part in.
         /// </summary>
@@ -77,18 +79,9 @@
         {
             get
             {
-                using (SqlConnection connection = new SqlConnection(Settings.connectionString))
-                {
-                    connection.Open();
-
-                    using (SqlCommand getScore = new SqlCommand($"SELECT Active FROM [{this.Tournament.Name}] WHERE Player = @Player", connection))
-                    {
-                        getScore.Parameters.Add("@Player", SqlDbType.Int).Value = this.Player.Id;
-
-                        return (bool)getScore.ExecuteScalar();
-                    }
-                }
+                return this._Active;
             }
+
             set
             {
                 using (SqlConnection connection = new SqlConnection(Settings.connectionString))
@@ -101,6 +94,8 @@
                         setActive.Parameters.Add("@Player", SqlDbType.Int).Value = this.Player.Id;
                     }
                 }
+
+                this._Active = value;
             }
         }
         
@@ -355,9 +350,7 @@
         /// <param name="round">The <see cref="TournamentRound"/> to award a BYE for.</param>
         public void AwardBye(TournamentRound round)
         {
-            this.Score++;
-
-            round.ByeReceiver = this;
+            this.Tournament.byes[round] = this;
         }
     }
 }

@@ -72,6 +72,8 @@
                             tournament.Rounds.Where(i => i.Number == number).First().AddGame(GameDatabase.Games[id]);
                         }
                     }
+
+                    rdr.Close();
                 }
             }
 

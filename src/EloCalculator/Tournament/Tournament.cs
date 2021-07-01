@@ -53,6 +53,8 @@
         /// </summary>
         public List<TournamentPlayer> Players = new List<TournamentPlayer>();
 
+        public Dictionary<TournamentRound, TournamentPlayer> byes = new Dictionary<TournamentRound, TournamentPlayer>();
+
         /// <summary>
         /// Initialises a new instance of the <see cref="Tournament"/> class.
         /// </summary>
@@ -85,23 +87,15 @@
         /// </summary>
         public void UpdateStats()
         {
+            this.ResetPlayers();
+
             // Update scores
             foreach (TournamentRound round in this.Rounds)
             {
                 foreach (Game game in round.Games)
                 {
-                    foreach (TournamentPlayer player in this.Players)
-                    {
-                        if (player.Player.Name == game.White.Name)
-                        {
-                            player.UpdateScore(Side.White, game.Result);
-                        }
-
-                        if (player.Player.Name == game.Black.Name)
-                        {
-                            player.UpdateScore(Side.Black, game.Result);
-                        }
-                    }
+                    this.Players.Where(i => i.Player == game.White).FirstOrDefault().UpdateScore(Side.White, game.Result);
+                    this.Players.Where(i => i.Player == game.Black).FirstOrDefault().UpdateScore(Side.Black, game.Result);
                 }
             }
 
@@ -111,6 +105,39 @@
                 player.UpdateSB();
 
                 player.UpdateBuchholz();
+            }
+
+            this.UpdateByes();
+        }
+
+        public void UpdateByes()
+        {
+            foreach (TournamentPlayer p in this.byes.Values)
+            {
+                using (SqlConnection connection = new SqlConnection(Settings.connectionString))
+                {
+                    connection.Open();
+
+                    using (SqlCommand command = new SqlCommand($"UPDATE {this.Name} SET Score=Score + 1 WHERE Player = @Player", connection))
+                    {
+                        command.Parameters.Add("@Player", SqlDbType.Int).Value = p.Player.Id;
+
+                        command.ExecuteNonQuery();
+                    }
+                }
+            }
+        }
+
+        public void ResetPlayers()
+        {
+            using (SqlConnection connection = new SqlConnection(Settings.connectionString))
+            {
+                connection.Open();
+
+                using (SqlCommand command = new SqlCommand($"UPDATE {this.Name} SET Score=0, [Sonneborn-Berger]=0, Buchholz=0", connection))
+                {
+                    command.ExecuteNonQuery();
+                }
             }
         }
 

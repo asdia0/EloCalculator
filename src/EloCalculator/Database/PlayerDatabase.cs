@@ -181,7 +181,6 @@
 
             foreach (string name in records)
             {
-                Console.WriteLine((name));
                 new Player(name);
             }
         }

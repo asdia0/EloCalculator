@@ -21,6 +21,25 @@
         private int _Id;
 
         /// <summary>
+        /// Checks if <see cref="Tournament"/> has been set.
+        /// </summary>
+        private bool TournamentSet = false;
+
+        private Tournament? _Tournament;
+
+        private bool RoundSet = false;
+
+        private TournamentRound? _Round;
+
+        private bool _Rated;
+
+        private Player _White;
+
+        private Player _Black;
+
+        private Result _Result;
+
+        /// <summary>
         /// Represents the <see cref="Game"/>'s ID.
         /// </summary>
         public int Id
@@ -50,17 +69,7 @@
         {
             get
             {
-                using (SqlConnection connection = new SqlConnection(Settings.connectionString))
-                {
-                    connection.Open();
-
-                    using (SqlCommand getWhite = new SqlCommand($"SELECT White FROM Game WHERE Id = @ID", connection))
-                    {
-                        getWhite.Parameters.Add("@ID", SqlDbType.Int).Value = this.Id;
-
-                        return PlayerDatabase.Players[(int)getWhite.ExecuteScalar()];
-                    }
-                }
+                return this._White;
             }
 
             set
@@ -85,6 +94,8 @@
                 }
 
                 this.Tournament.UpdateStats();
+
+                this._White = value;
             }
         }
 
@@ -95,17 +106,7 @@
         {
             get
             {
-                using (SqlConnection connection = new SqlConnection(Settings.connectionString))
-                {
-                    connection.Open();
-
-                    using (SqlCommand getBlack = new SqlCommand($"SELECT Black FROM Game WHERE Id = @ID", connection))
-                    {
-                        getBlack.Parameters.Add("@ID", SqlDbType.Int).Value = this.Id;
-
-                        return PlayerDatabase.Players[(int)getBlack.ExecuteScalar()];
-                    }
-                }
+                return this._Black;
             }
 
             set
@@ -130,6 +131,8 @@
                 }
 
                 this.Tournament.UpdateStats();
+
+                this._Black = value;
             }
         }
 
@@ -140,19 +143,7 @@
         {
             get
             {
-                using (SqlConnection connection = new SqlConnection(Settings.connectionString))
-                {
-                    connection.Open();
-
-                    using (SqlCommand getResult = new SqlCommand($"SELECT Result FROM Game WHERE Id = @ID", connection))
-                    {
-                        getResult.Parameters.Add("@ID", SqlDbType.Int).Value = this.Id;
-
-                        var res = getResult.ExecuteScalar();
-
-                        return ((res == DBNull.Value) ? Result.Draw : ((bool)res == true) ? Result.White : Result.Black);
-                    }
-                }
+                return this._Result;
             }
 
             set
@@ -177,6 +168,8 @@
                 }
 
                 this.Tournament.UpdateStats();
+
+                this._Result = value;
             }
         }
 
@@ -232,17 +225,7 @@
         {
             get
             {
-                using (SqlConnection connection = new SqlConnection(Settings.connectionString))
-                {
-                    connection.Open();
-
-                    using (SqlCommand getRated = new SqlCommand($"SELECT Rated FROM Game WHERE Id = @ID", connection))
-                    {
-                        getRated.Parameters.Add("@ID", SqlDbType.Int).Value = this.Id;
-
-                        return (bool)getRated.ExecuteScalar();
-                    }
-                }
+                return this._Rated;
             }
 
             set
@@ -252,7 +235,7 @@
                 {
                     connection.Open();
 
-                    using (SqlCommand setRated = new SqlCommand("UPDATE Game SET Rated = @Rates WHERE Id=@ID", connection))
+                    using (SqlCommand setRated = new SqlCommand("UPDATE Game SET Rated = @Rated WHERE Id=@ID", connection))
                     {
                         setRated.Parameters.Add("@Rated", SqlDbType.Bit).Value = value;
                         setRated.Parameters.Add("@ID", SqlDbType.Int).Value = this.Id;
@@ -267,6 +250,8 @@
                 }
 
                 this.Tournament.UpdateStats();
+
+                this._Rated = value;
             }
         }
 
@@ -277,31 +262,14 @@
         {
             get
             {
-                using (SqlConnection connection = new SqlConnection(Settings.connectionString))
-                {
-                    connection.Open();
-
-                    using (SqlCommand getTournament = new SqlCommand($"SELECT TournamentName FROM Game WHERE Id = @ID", connection))
-                    {
-                        getTournament.Parameters.Add("@ID", SqlDbType.Int).Value = this.Id;
-
-                        var res = getTournament.ExecuteScalar();
-
-                        if (res == DBNull.Value)
-                        {
-                            return null;
-                        }
-
-                        return TournamentDatabase.Tournaments.Where(i => i.Name == (string)res).First();
-                    }
-                }
+                return this._Tournament;
             }
 
             set
             {
-                if (this.Tournament != null)
+                if (this.TournamentSet)
                 {
-                    this.Tournament.UpdateStats();
+                    throw new Exception("Tournament has already been set.");
                 }
 
                 // Update DB
@@ -318,7 +286,7 @@
                     }
                 }
 
-                value.UpdateStats();
+                this._Tournament = value;
             }
         }
 
@@ -329,28 +297,15 @@
         {
             get
             {
-                using (SqlConnection connection = new SqlConnection(Settings.connectionString))
-                {
-                    connection.Open();
-
-                    using (SqlCommand getRound = new SqlCommand($"SELECT TournamentRound FROM Game WHERE Id = @ID", connection))
-                    {
-                        getRound.Parameters.Add("@ID", SqlDbType.Int).Value = this.Id;
-
-                        var res = getRound.ExecuteScalar();
-
-                        if (res == DBNull.Value)
-                        {
-                            return null;
-                        }
-
-                        return this.Tournament.Rounds.Where(i => i.Number == (int)res).First();
-                    }
-                }
+                return this._Round;
             }
 
             set
             {
+                if (this.RoundSet)
+                {
+                    throw new Exception("Round has already been set.");
+                }
                 // Update DB
                 using (SqlConnection connection = new SqlConnection(Settings.connectionString))
                 {
@@ -364,6 +319,8 @@
                         setTournamentRound.ExecuteNonQuery();
                     }
                 }
+
+                this._Round = value;
             }
         }
 
@@ -377,11 +334,11 @@
         /// <param name="rated">Represents whether the <see cref="Game"/> affects <see cref="Player.Rating"/>s.</param>
         public Game(Player white, Player black, Result result, DateTime dateTime, bool rated)
         {
+            this.Rated = rated;
             this.White = white;
             this.Black = black;
             this.Result = result;
             this.DateTime = dateTime;
-            this.Rated = rated;
 
             // add game
             using (SqlConnection connection = new SqlConnection(Settings.connectionString))
@@ -442,23 +399,23 @@
         /// <param name="tournamentRound">Represents the <see cref="EloCalculator.TournamentRound"/> the <see cref="Game"/> was played in.</param>
         public Game(Player white, Player black, Result result, DateTime dateTime, bool rated, Tournament tournament, TournamentRound tournamentRound)
         {
+            this.Tournament = tournament;
+            this.TournamentRound = tournamentRound;
+            this.Rated = rated;
             this.White = white;
             this.Black = black;
             this.Result = result;
             this.DateTime = dateTime;
-            this.Rated = rated;
-            this.Tournament = tournament;
-            this.TournamentRound = tournamentRound;
 
             // add game
             using (SqlConnection connection = new SqlConnection(Settings.connectionString))
             {
                 connection.Open();
 
-                using (SqlCommand addGame = new SqlCommand($"INSERT INTO Game(White, Black, Result, DateTime, Rated, TournamentName, TournamentRound) VALUES(@White, @Black, @Result, @DateTime, @Rated, @TName,, @TRound);", connection))
+                using (SqlCommand addGame = new SqlCommand($"INSERT INTO Game(White, Black, Result, DateTime, Rated, TournamentName, TournamentRound) VALUES(@White, @Black, @Result, @DateTime, @Rated, @TName, @TRound);", connection))
                 {
-                    addGame.Parameters.Add("@White", SqlDbType.Text).Value = white.Name;
-                    addGame.Parameters.Add("@Black", SqlDbType.Text).Value = black.Name;
+                    addGame.Parameters.Add("@White", SqlDbType.Int).Value = white.Id;
+                    addGame.Parameters.Add("@Black", SqlDbType.Int).Value = black.Id;
                     if (result == Result.Draw)
                     {
                         addGame.Parameters.Add("@Result", SqlDbType.Bit).Value = DBNull.Value;
@@ -510,11 +467,11 @@
         public Game(int id, Player white, Player black, Result result, DateTime dateTime, bool rated)
         {
             this.Id = id;
+            this.Rated = rated;
             this.White = white;
             this.Black = black;
             this.Result = result;
             this.DateTime = dateTime;
-            this.Rated = rated;
         }
 
         /// <summary>
@@ -530,13 +487,13 @@
         public Game(int id, Player white, Player black, Result result, DateTime dateTime, bool rated, Tournament tournament, TournamentRound tournamentRound)
         {
             this.Id = id;
+            this.Tournament = tournament;
+            this.TournamentRound = tournamentRound;
+            this.Rated = rated;
             this.White = white;
             this.Black = black;
             this.Result = result;
             this.DateTime = dateTime;
-            this.Rated = rated;
-            this.Tournament = tournament;
-            this.TournamentRound = tournamentRound;
         }
     }
 }

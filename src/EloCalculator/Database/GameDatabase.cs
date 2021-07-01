@@ -176,19 +176,46 @@
                 }
                 else if (record.Length == 7)
                 {
-                    Tournament tournament = TournamentDatabase.LoadTournament(record[5]);
-                    TournamentRound round = tournament.Rounds.Where(i => i.Number == int.Parse(record[6])).First();
+                    Tournament tournament = null;
+
+                    if (TournamentDatabase.Tournaments.Where(i => i.Name == record[5]).Any())
+                    {
+                        tournament = TournamentDatabase.Tournaments.Where(i => i.Name == record[5]).FirstOrDefault();
+                    }
+                    else
+                    {
+                        tournament = new Tournament(record[5]);
+                    }
+
+                    TournamentRound round = null;
+                    try
+                    {
+                        round = tournament.Rounds.Where(i => i.Number == int.Parse(record[6])).First();
+                    }
+                    catch (Exception e)
+                    {
+                        round = new TournamentRound(tournament, int.Parse(record[6]));
+                    }
                     Player white = PlayerDatabase.Players[int.Parse(record[0])];
 
                     if (record[1] == "BYE")
                     {
-                        tournament.Players.Where(i => i.Player == white).ToList().First().AwardBye(round);
+                        if (!tournament.Players.Where(i => i.Player == white).Any())
+                        {
+                            tournament.Players.Add(new TournamentPlayer(tournament, white, true));
+                        }
+
+                        tournament.Players.Where(i => i.Player == white).ToList().FirstOrDefault().AwardBye(round);
+
+                        tournament.UpdateStats();
                     }
                     else
                     {
                         Player black = PlayerDatabase.Players[int.Parse(record[1])];
 
-                        new Game(white, black, result, dateTime, rated, tournament, round);
+                        Game g = new Game(white, black, result, dateTime, rated, tournament, round);
+
+                        round.AddGame(g);
                     }
                 }
             }
