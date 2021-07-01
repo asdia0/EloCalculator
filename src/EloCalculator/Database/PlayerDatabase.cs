@@ -181,5 +181,31 @@
                 new Player(name);
             }
         }
+
+        /// <summary>
+        /// Exports records to a tab-separated values (TSV) file.
+        /// </summary>
+        /// <param name="path">The path to write the records to.</param>
+        public static void ExportDatabseToTSV(string path)
+        {
+            string content = string.Empty;
+
+            using (SqlConnection connection = new SqlConnection(Settings.connectionString))
+            {
+                connection.Open();
+
+                using (SqlCommand command = new SqlCommand("SELECT Name FROM Player", connection))
+                {
+                    var rdr = command.ExecuteReader();
+
+                    while (rdr.Read())
+                    {
+                        content += $"{rdr["Name"]}\n";
+                    }
+                }
+            }
+
+            File.WriteAllText(path, content);
+        }
     }
 }
