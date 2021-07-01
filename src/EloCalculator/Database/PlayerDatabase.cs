@@ -1,5 +1,6 @@
 ﻿namespace EloCalculator
 {
+    using System;
     using System.Collections.Generic;
     using System.Data;
     using System.Data.SqlClient;
@@ -176,8 +177,11 @@
         {
             List<string> records = File.ReadAllLines(path).ToList();
 
+            records = records.Where(i => i != null || i != string.Empty).ToList();
+
             foreach (string name in records)
             {
+                Console.WriteLine((name));
                 new Player(name);
             }
         }
