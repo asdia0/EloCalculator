@@ -245,8 +245,8 @@
 
                 using (SqlCommand addPlayer = new SqlCommand("INSERT INTO Player(Name, Rating, Wins, Losses, Draws) VALUES(@Name, @Rating, 0, 0, 0);", connection))
                 {
-                    addPlayer.Parameters.Add("@Name", SqlDbType.Text).Value = this.Name;
-                    addPlayer.Parameters.Add("@Rating", SqlDbType.Float).Value = this.Rating;
+                    addPlayer.Parameters.Add("@Name", SqlDbType.Text).Value = name;
+                    addPlayer.Parameters.Add("@Rating", SqlDbType.Float).Value = PlayerDatabase.defaultRating;
 
                     addPlayer.ExecuteNonQuery();
                 }
