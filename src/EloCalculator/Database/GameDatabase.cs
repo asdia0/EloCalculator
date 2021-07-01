@@ -169,8 +169,6 @@
                 Result result = (record[2] == "NULL") ? Result.Draw : ((record[2] == "1") ? Result.White : Result.Black);
                 DateTime dateTime = DateTime.Parse(record[3]);
                 bool rated = (record[4] == "1") ? true : false;
-                Tournament tournament = TournamentDatabase.LoadTournament(record[5]);
-                TournamentRound round = tournament.Rounds.Where(i => i.Number == int.Parse(record[6])).First();
 
                 if (record.Length == 5)
                 {
@@ -178,6 +176,8 @@
                 }
                 else if (record.Length == 7)
                 {
+                    Tournament tournament = TournamentDatabase.LoadTournament(record[5]);
+                    TournamentRound round = tournament.Rounds.Where(i => i.Number == int.Parse(record[6])).First();
                     new Game(white, black, result, dateTime, rated, tournament, round);
                 }
             }
