@@ -8,6 +8,6 @@
         /// <summary>
         /// The connection string of the database.
         /// </summary>
-        public static string connectionString = @"Your-Connection-String";
+        public static string connectionString;
     }
 }
