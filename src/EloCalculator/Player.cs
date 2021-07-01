@@ -90,11 +90,11 @@
                 {
                     connection.Open();
 
-                    using (SqlCommand getName = new SqlCommand($"SELECT Rating FROM Player WHERE Id = @ID", connection))
+                    using (SqlCommand getRating = new SqlCommand($"SELECT Rating FROM Player WHERE Id = @ID", connection))
                     {
-                        getName.Parameters.Add("@ID", SqlDbType.Int).Value = this.Id;
+                        getRating.Parameters.Add("@ID", SqlDbType.Int).Value = this.Id;
 
-                        return (double)getName.ExecuteScalar();
+                        return (double)getRating.ExecuteScalar();
                     }
                 }
             }
