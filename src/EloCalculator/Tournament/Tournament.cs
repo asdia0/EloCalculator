@@ -280,7 +280,6 @@
                             {
                                 res.Add((this.Players[white], null));
                             }
-
                             else
                             {
                                 res.Add((this.Players[(int)black], this.Players[white]));
