@@ -8,7 +8,7 @@
 
     public static class PlayerDatabase
     {
-        public static double defaultRating = 1000;
+        public static double DefaultRating = 1000;
 
         public static int kCoeff = 40;
 

@@ -64,7 +64,7 @@
         {
             this.ID = PlayerDatabase.Players.Count;
             this.Name = name;
-            this.Rating = PlayerDatabase.defaultRating;
+            this.Rating = PlayerDatabase.DefaultRating;
 
             PlayerDatabase.Players.Add(this);
         }
