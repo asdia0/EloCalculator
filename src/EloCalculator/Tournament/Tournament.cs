@@ -1,10 +1,9 @@
 ﻿namespace EloCalculator
 {
-    using static System.Math;
     using System.Collections.Generic;
     using System.Linq;
-
     using Newtonsoft.Json;
+    using static System.Math;
 
     public class Tournament
     {
