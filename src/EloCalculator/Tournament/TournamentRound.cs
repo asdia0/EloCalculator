@@ -5,7 +5,7 @@
     using Newtonsoft.Json;
 
     /// <summary>
-    /// Represents a round in a <see cref="Tournament"/>.
+    /// Represents a round in a <see cref="EloCalculator.Tournament"/>.
     /// </summary>
     public class TournamentRound
     {
