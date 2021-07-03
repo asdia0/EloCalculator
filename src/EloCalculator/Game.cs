@@ -1,7 +1,6 @@
 ﻿namespace EloCalculator
 {
     using System;
-
     using Newtonsoft.Json;
 
     public class Game
