@@ -48,7 +48,7 @@
         }
 
         /// <summary>
-        /// Exports <see cref="Player"/> to a file as a JSON object.
+        /// Exports <see cref="Players"/> to a file as a JSON object.
         /// </summary>
         /// <param name="path">The path to the file to export to.</param>
         public static void Export(string path)
