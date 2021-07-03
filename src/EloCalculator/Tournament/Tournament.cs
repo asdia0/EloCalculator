@@ -116,6 +116,7 @@
                         {
                             top.Add(initial[i]);
                         }
+
                         for (int i = initial.Count / 2; i < initial.Count; i++)
                         {
                             bottom.Add(initial[i]);
@@ -127,6 +128,7 @@
                         {
                             top.Add(initial[i]);
                         }
+
                         for (int i = (int)Floor((double)initial.Count) + 1; i < initial.Count; i++)
                         {
                             bottom.Add(initial[i]);

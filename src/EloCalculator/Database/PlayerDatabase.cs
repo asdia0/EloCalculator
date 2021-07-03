@@ -58,12 +58,14 @@
                         scoreB = 0;
                         break;
                     }
+
                 case Result.Black:
                     {
                         scoreA = 0;
                         scoreB = 1;
                         break;
                     }
+
                 case Result.Draw:
                     {
                         scoreA = scoreB = 0.5;
