@@ -18,10 +18,10 @@ An example program can be found [here](src/EloCalculator.Example/Program.cs).
   - [Baumbach](https://en.wikipedia.org/wiki/Tie-breaking_in_Swiss-system_tournaments#Most_wins_(Baumbach))
   - [Linear Performance Rating](https://en.wikipedia.org/wiki/Performance_rating_(chess)#Linear_performance_rating)
 - Tournament types
+  - [Arena](https://support.chess.com/article/335-what-are-arena-tournaments)
+  - [Danish](https://en.wikipedia.org/wiki/Swiss-system_tournament#Danish_system)
   - [Dutch](https://en.wikipedia.org/wiki/Swiss-system_tournament#Dutch_system)
   - [Monrad](https://en.wikipedia.org/wiki/Swiss-system_tournament#Monrad_system)
-  - [Danish](https://en.wikipedia.org/wiki/Swiss-system_tournament#Danish_system)
   - [Round-Robin](https://en.wikipedia.org/wiki/Chess_tournament#Round-robin)
-  - [Arena](https://support.chess.com/article/335-what-are-arena-tournaments)
 - Tournament pairings
 - Leaderboards (global and tournament)
