@@ -5,23 +5,48 @@
     using Newtonsoft.Json;
     using static System.Math;
 
+    /// <summary>
+    /// Represents a tournament.
+    /// </summary>
     public class Tournament
     {
+        /// <summary>
+        /// Gets the tournament's unique identification number.
+        /// </summary>
         [JsonProperty("ID")]
         public int ID { get; }
 
+        /// <summary>
+        /// Gets the tournament's name.
+        /// </summary>
         [JsonProperty("Name")]
         public string Name { get; }
 
+        /// <summary>
+        /// Gets the tournament's type.
+        /// </summary>
         [JsonProperty("Type")]
         public TournamentType Type { get; }
 
+        /// <summary>
+        /// Gets a list of <see cref="TournamentPlayer"/>s participating in the tournament.
+        /// </summary>
         [JsonProperty("Players")]
         public List<TournamentPlayer> Players { get; }
 
+        /// <summary>
+        /// Gets a list of <see cref="TournamentRound"/>s being held during the tournament.
+        /// </summary>
         [JsonProperty("Rounds")]
         public List<TournamentRound> Rounds { get; }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Tournament"/> class.
+        /// </summary>
+        /// <param name="name">The tournament's name.</param>
+        /// <param name="type">The tournament's type.</param>
+        /// <param name="players">A list of <see cref="TournamentPlayer"/>s participating in the tournament.</param>
+        /// <param name="rounds">A list of <see cref="TournamentRound"/>s being held during the tournament.</param>
         public Tournament(string name, TournamentType type, List<TournamentPlayer> players = null, List<TournamentRound> rounds = null)
         {
             this.ID = TournamentDatabase.Tournaments.Count;
@@ -33,10 +58,14 @@
             TournamentDatabase.Tournaments.Add(this);
         }
 
+        /// <summary>
+        /// Gets the pairings for the next round.
+        /// </summary>
+        /// <returns>A list of <see cref="TournamentPlayer"/> tuples. The first item represents the <see cref="Player"/> playing white, the second item represents the <see cref="Player"/> playing black.</returns>
         public List<(TournamentPlayer White, TournamentPlayer? Black)> GetPairings()
         {
             List<(TournamentPlayer white, TournamentPlayer? black)> res = new List<(TournamentPlayer, TournamentPlayer?)>();
-            List<TournamentPlayer> rankings = this.GetRankings();
+            List<TournamentPlayer> rankings = this.GetLeaderboard();
 
             // TODO
             switch (this.Type)
@@ -293,7 +322,11 @@
             }
         }
 
-        public List<TournamentPlayer> GetRankings()
+        /// <summary>
+        /// Gets a leaderboard of all players in <see cref="Players"/> based upon <see cref="TournamentPlayer.Score"/> and various tiebreaks.
+        /// </summary>
+        /// <returns>A list of <see cref="TournamentPlayer"/> sorted according to the tournament's <see cref="Type"/>.</returns>
+        public List<TournamentPlayer> GetLeaderboard()
         {
             switch (this.Type)
             {
@@ -323,6 +356,10 @@
             }
         }
 
+        /// <summary>
+        /// Gets a JSON string representing the game.
+        /// </summary>
+        /// <returns>A JSON string that represents the game.</returns>
         public override string ToString()
         {
             return JsonConvert.SerializeObject(this);
