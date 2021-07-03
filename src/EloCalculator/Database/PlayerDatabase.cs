@@ -75,8 +75,8 @@
 
             double expectedScoreB = 1 / (1 + Math.Pow(10, (whiteRating - blackRating) / BenchmarkCoefficient));
 
-            white.Rating = whiteRating + KCoefficient * (scoreA - expectedScoreA);
-            black.Rating = blackRating + KCoefficient * (scoreB - expectedScoreB);
+            white.Rating = whiteRating + (KCoefficient * (scoreA - expectedScoreA));
+            black.Rating = blackRating + (KCoefficient * (scoreB - expectedScoreB));
         }
 
         public static List<Player> GetRankings()
