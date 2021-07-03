@@ -10,7 +10,7 @@
     {
         public static double DefaultRating = 1000;
 
-        public static int kCoeff = 40;
+        public static int KCoefficient = 40;
 
         public static int benchmarkCoeff = 400;
 
@@ -75,8 +75,8 @@
 
             double expectedScoreB = 1 / (1 + Math.Pow(10, (whiteRating - blackRating) / benchmarkCoeff));
 
-            white.Rating = whiteRating + kCoeff * (scoreA - expectedScoreA);
-            black.Rating = blackRating + kCoeff * (scoreB - expectedScoreB);
+            white.Rating = whiteRating + KCoefficient * (scoreA - expectedScoreA);
+            black.Rating = blackRating + KCoefficient * (scoreB - expectedScoreB);
         }
 
         public static List<Player> GetRankings()
