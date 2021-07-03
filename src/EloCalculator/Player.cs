@@ -1,5 +1,6 @@
 ﻿namespace EloCalculator
 {
+    using System;
     using System.Collections.Generic;
     using System.Linq;
     using Newtonsoft.Json;
@@ -107,6 +108,11 @@
         public override string ToString()
         {
             return JsonConvert.SerializeObject(this);
+        }
+        
+        public static implicit operator Player(long id)
+        {
+            return PlayerDatabase.Players[Convert.ToInt32(id)];
         }
     }
 }
