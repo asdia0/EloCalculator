@@ -46,7 +46,7 @@
         {
             get
             {
-                return this.White.ID;
+                return this.Black.ID;
             }
         }
 
