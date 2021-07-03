@@ -53,19 +53,19 @@
 
             switch (result)
             {
-                case (Result.White):
+                case Result.White:
                     {
                         scoreA = 1;
                         scoreB = 0;
                         break;
                     }
-                case (Result.Black):
+                case Result.Black:
                     {
                         scoreA = 0;
                         scoreB = 1;
                         break;
                     }
-                case (Result.Draw):
+                case Result.Draw:
                     {
                         scoreA = scoreB = 0.5;
                         break;
