@@ -4,14 +4,32 @@
     using System.Linq;
     using Newtonsoft.Json;
 
+    /// <summary>
+    /// Represents a player participating in a <see cref="EloCalculator.Tournament"/>.
+    /// </summary>
     public class TournamentPlayer
     {
+        /// <summary>
+        /// Gets the <see cref="EloCalculator.Tournament"/> the player is participating in.
+        /// </summary>
         [JsonIgnore]
         public Tournament Tournament { get; }
 
+        /// <summary>
+        /// Gets the player's unique identification number.
+        /// </summary>
         [JsonProperty]
         public int ID { get; }
 
+        /// <summary>
+        /// Gets the player's <see cref="EloCalculator.Player"/>.
+        /// </summary>
+        [JsonIgnore]
+        public Player Player { get; }
+
+        /// <summary>
+        /// Gets the unique identifaction number of the player's <see cref="EloCalculator.Player"/>.
+        /// </summary>
         [JsonProperty("Player")]
         public int PlayerID
         {
@@ -21,18 +39,9 @@
             }
         }
 
-        [JsonIgnore]
-        public Player Player { get; }
-
-        [JsonProperty("Games")]
-        public List<int> GamesID
-        {
-            get
-            {
-                return this.Games.Select(i => i.ID).ToList();
-            }
-        }
-
+        /// <summary>
+        /// Gets a list of <see cref="Game"/>s played by the player during the <see cref="Tournament"/>.
+        /// </summary>
         [JsonIgnore]
         public List<Game> Games
         {
@@ -62,6 +71,21 @@
             }
         }
 
+        /// <summary>
+        /// Gets a list of the unique identifciation numbers of the <see cref="Game"/>s played by the player during the <see cref="Tournament"/>.
+        /// </summary>
+        [JsonProperty("Games")]
+        public List<int> GamesID
+        {
+            get
+            {
+                return this.Games.Select(i => i.ID).ToList();
+            }
+        }
+
+        /// <summary>
+        /// Gets the player's conventional score.
+        /// </summary>
         [JsonProperty]
         public float Score
         {
@@ -109,6 +133,9 @@
             }
         }
 
+        /// <summary>
+        /// Gets the player's <see href="https://en.wikipedia.org/wiki/Performance_rating_(chess)#Linear_performance_rating">linear performance rating</see>.
+        /// </summary>
         public double PerformanceRating
         {
             get
@@ -136,6 +163,9 @@
             }
         }
 
+        /// <summary>
+        /// Gets the player's <see href="https://en.wikipedia.org/wiki/Sonneborn%E2%80%93Berger_score#Neustadtl_Sonneborn%E2%80%93Berger_score">Sonneborn-Berger score</see>.
+        /// </summary>
         [JsonProperty]
         public float SonnebornBerger
         {
@@ -180,6 +210,9 @@
             }
         }
 
+        /// <summary>
+        /// Gets the player's <see href=https://en.wikipedia.org/wiki/Buchholz_system"">Buchholz score</see>.
+        /// </summary>
         [JsonProperty]
         public float Buchholz
         {
@@ -212,6 +245,9 @@
             }
         }
 
+        /// <summary>
+        /// Gets the player's <see href=https://en.wikipedia.org/wiki/Buchholz_system"">Median Buchholz score</see>.
+        /// </summary>
         [JsonProperty]
         public float MedianBuchholz
         {
@@ -259,6 +295,9 @@
             }
         }
 
+        /// <summary>
+        /// Gets the player's Buchholz Cut 1 score (<see cref="Buchholz"/> but the lowest opponent score is disregarded).
+        /// </summary>
         [JsonProperty]
         public float BuchholzCut1
         {
@@ -300,6 +339,9 @@
             }
         }
 
+        /// <summary>
+        /// Gets the player's <see href="https://en.wikipedia.org/wiki/Tie-breaking_in_Swiss-system_tournaments#Cumulative">culmulative score</see>.
+        /// </summary>
         [JsonProperty]
         public float Culmulative
         {
@@ -363,6 +405,9 @@
             }
         }
 
+        /// <summary>
+        /// Gets the player's <see href="https://en.wikipedia.org/wiki/Tie-breaking_in_Swiss-system_tournaments#Most_wins_(Baumbach)">Baumbach score</see>.
+        /// </summary>
         [JsonProperty]
         public int Baumbach
         {
@@ -389,6 +434,9 @@
             }
         }
 
+        /// <summary>
+        /// Gets the number of times the player has played each colour during the <see cref="Tournament"/>.
+        /// </summary>
         [JsonIgnore]
         public (int White, int Black) Colours
         {
@@ -415,6 +463,11 @@
             }
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="TournamentPlayer"/> class.
+        /// </summary>
+        /// <param name="tournament">The <see cref="EloCalculator.Tournament"/> the player is participating in.</param>
+        /// <param name="player">The player's <see cref="EloCalculator.Player"/>.</param>
         public TournamentPlayer(Tournament tournament, Player player)
         {
             this.ID = tournament.Players.Count;
@@ -422,6 +475,11 @@
             this.Player = player;
         }
 
+        /// <summary>
+        /// Gets the player's net score against another player.
+        /// </summary>
+        /// <param name="player">The player to compare with.</param>
+        /// <returns>The player's net score.</returns>
         public float GetHeadToHeadScore(TournamentPlayer player)
         {
             if (player.Tournament != this.Tournament)
@@ -467,6 +525,10 @@
             return res;
         }
 
+        /// <summary>
+        /// Gets a JSON string representing the game.
+        /// </summary>
+        /// <returns>A JSON string that represents the game.</returns>
         public override string ToString()
         {
             return JsonConvert.SerializeObject(this);
