@@ -62,6 +62,11 @@
         /// <param name="game">The game to get the players to update from.</param>
         public static void UpdateRatings(Game game)
         {
+            if (!game.Rated)
+            {
+                return;
+            }
+
             Player white = game.White;
             Player black = game.Black;
 
