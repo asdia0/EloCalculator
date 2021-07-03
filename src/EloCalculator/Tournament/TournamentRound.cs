@@ -1,118 +1,121 @@
 ﻿namespace EloCalculator
 {
-    using System;
     using System.Collections.Generic;
     using System.Linq;
 
+    using Newtonsoft.Json;
+
     public class TournamentRound
     {
-        /// <summary>
-        /// Checks if <see cref="Tournament"/> has been set.
-        /// </summary>
-        private bool TournamentSet;
+        [JsonIgnore]
+        public Tournament Tournament { get; }
 
-        /// <summary>
-        /// Checks if <see cref="Number"/> has been set.
-        /// </summary>
-        private bool NumberSet;
+        [JsonProperty]
+        public int ID { get; }
 
-        /// <summary>
-        /// The value of <see cref="Tournament"/>.
-        /// </summary>
-        private Tournament _Tournament;
-
-        /// <summary>
-        /// The value of <see cref="Number"/>.
-        /// </summary>
-        private int _Number;
-
-        /// <summary>
-        /// Represents the <see cref="Tournament"/> the <see cref="TournamentRound"/> is part of.
-        /// </summary>
-        public Tournament Tournament
+        [JsonProperty("Games")]
+        public List<int> GamesID
         {
             get
             {
-                return this._Tournament;
-            }
-
-            set
-            {
-                if (this.TournamentSet)
-                {
-                    throw new Exception("Name has already been set.");
-                }
-
-                this.TournamentSet = true;
-                this._Tournament = value;
+                return this.Games.Select(i => i.ID).ToList();
             }
         }
 
-        /// <summary>
-        /// Represents the round number of the <see cref="TournamentRound"/>.
-        /// </summary>
-        public int Number
+        [JsonIgnore]
+        public HashSet<Game> Games { get; }
+
+        [JsonIgnore]
+        public TournamentPlayer? PairingBye { get; set; }
+
+        [JsonProperty("Bye (pairings)")]
+        public int? PairingByeID
         {
             get
             {
-                return this._Number;
-            }
-
-            set
-            {
-                if (this.NumberSet)
-                {
-                    throw new Exception("Name has already been set.");
-                }
-
-                this.NumberSet = true;
-                this._Number = value;
+                return this.PairingBye == null ? null : this.PairingBye.ID;
             }
         }
 
-        /// <summary>
-        /// A list of <see cref="Game"/>s that took place during the <see cref="TournamentRound"/>.
-        /// </summary>
-        public List<Game> Games = new List<Game>();
+        [JsonIgnore]
+        public HashSet<TournamentPlayer> RequestedByes { get; set; }
 
-        /// <summary>
-        /// Initialises a new instance of the <see cref="TournamentRound"/> class.
-        /// </summary>
-        /// <param name="tournament">The <see cref="Tournament"/> the <see cref="TournamentRound"/> is part of.</param>
-        /// <param name="number">The round number of the <see cref="TournamentRound"/>.</param>
-        public TournamentRound(Tournament tournament, int number)
+        [JsonProperty("Bye (requested)")]
+        public List<int> RequestedByesID
         {
+            get
+            {
+                return this.RequestedByes.Select(i => i.ID).ToList();
+            }
+        }
+
+        public TournamentRound(Tournament tournament, List<Game> games = null)
+        {
+            this.ID = tournament.Rounds.Count;
             this.Tournament = tournament;
-            this.Number = number;
-            
-            if (!this.Tournament.Rounds.Where(i => i.Number == number).Any())
+            this.RequestedByes = new HashSet<TournamentPlayer>();
+
+            if (games == null)
             {
-                this.Tournament.Rounds.Add(this);
+                this.Games = new HashSet<Game>();
+            }
+            else
+            {
+                this.AddGames(games);
             }
         }
 
-        /// <summary>
-        /// Adds a <see cref="Game"/> to <see cref="Games"/> and updates the <see cref="Tournament"/>'s stats.
-        /// </summary>
-        /// <param name="game">The <see cref="Game"/> to add</param>
         public void AddGame(Game game)
         {
-            game.Tournament = this.Tournament;
-            game.TournamentRound = this;
-
             this.Games.Add(game);
 
             if (!this.Tournament.Players.Where(i => i.Player == game.White).Any())
             {
-                this.Tournament.Players.Add(new TournamentPlayer(this.Tournament, game.White, true));
+                this.Tournament.Players.Add(new TournamentPlayer(this.Tournament, game.White));
             }
 
             if (!this.Tournament.Players.Where(i => i.Player == game.Black).Any())
             {
-                this.Tournament.Players.Add(new TournamentPlayer(this.Tournament, game.Black, true));
+                this.Tournament.Players.Add(new TournamentPlayer(this.Tournament, game.Black));
             }
+        }
 
-            this.Tournament.UpdateStats();
+        public void AddGames(List<Game> games)
+        {
+            foreach (Game game in games)
+            {
+                this.Games.Add(game);
+
+                if (!this.Tournament.Players.Where(i => i.Player == game.White).Any())
+                {
+                    this.Tournament.Players.Add(new TournamentPlayer(this.Tournament, game.White));
+                }
+
+                if (!this.Tournament.Players.Where(i => i.Player == game.Black).Any())
+                {
+                    this.Tournament.Players.Add(new TournamentPlayer(this.Tournament, game.Black));
+                }
+            }
+        }
+
+        public void AwardFullBye(TournamentPlayer player)
+        {
+            this.PairingBye = player;
+        }
+
+        public void AwardHalfBye(TournamentPlayer player)
+        {
+            this.RequestedByes.Add(player);
+        }
+
+        public void AwardHalfBye(List<TournamentPlayer> players)
+        {
+            this.RequestedByes.Union(players);
+        }
+
+        public override string ToString()
+        {
+            return JsonConvert.SerializeObject(this);
         }
     }
 }

@@ -1,7 +1,8 @@
 ﻿namespace EloCalculator.Program
 {
     using System;
-    using System.Linq;
+    using System.IO;
+
     using EloCalculator;
 
     class Program
@@ -12,22 +13,28 @@
         /// <param name="args"></param>
         static void Main(string[] args)
         {
-            // Set up connection string.
-            Settings.connectionString = "Your-Connection-String";
+            Game g = new Game(new Player("Player 1"), new Player("Player 2"), Result.White, DateTime.Now, true);
 
-            // Configure main databases.
-            PlayerDatabase.ConfigureDB();
-            GameDatabase.ConfigureDB();
+            Tournament t = new Tournament("Tournament 1", TournamentType.RoundRobin);
 
-            // Add players and games.
-            PlayerDatabase.AddRecordsFromTSV("player.tsv");
-            GameDatabase.AddRecordsFromTSV("game.tsv");
+            t.Rounds.Add(new TournamentRound(t));
 
-            // Creates a game and adds it to the database.
-            new Game(new Player("Player 1"), new Player("Player 2"), Result.White, DateTime.Now, true);
-            
-            // Exports all games into gameOutput.tsv
-            GameDatabase.ExportDatabseToTSV("gameOutput.tsv");
+            t.Rounds[0].AddGame(g);
+
+            //File.WriteAllText("game.json", GameDatabase.Export());
+            //File.WriteAllText("player.json", PlayerDatabase.Export());
+            //File.WriteAllText("tournament.json", TournamentDatabase.Export(0));
+
+            foreach ((TournamentPlayer white, TournamentPlayer? black) in t.GetPairings())
+            {
+                if (black == null)
+                {
+                    Console.WriteLine((white.Player.Name, "BYE"));
+                    continue;
+                }
+
+                Console.WriteLine((white.Player.Name, black.Player.Name));
+            }
         }
     }
 }

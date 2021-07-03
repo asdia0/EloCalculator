@@ -1,356 +1,476 @@
 ﻿namespace EloCalculator
 {
-    using System;
-    using System.Data;
-    using System.Data.SqlClient;
+    using System.Collections.Generic;
+    using System.Linq;
+
+    using Newtonsoft.Json;
 
     public class TournamentPlayer
     {
-        /// <summary>
-        /// Checks if <see cref="Tournament"/> has been set.
-        /// </summary>
-        private bool TournamentSet = false;
+        [JsonIgnore]
+        public Tournament Tournament { get; }
 
-        /// <summary>
-        /// Checks if <see cref="Player"/> has been set.
-        /// </summary>
-        private bool PlayerSet = false;
+        [JsonProperty]
+        public int ID { get; }
 
-        /// <summary>
-        /// The value of <see cref="Tournament"/>.
-        /// </summary>
-        private Tournament _Tournament;
-
-        /// <summary>
-        /// The value of <see cref="Player"/>.
-        /// </summary>
-        private Player _Player;
-
-        private bool _Active;
-
-        /// <summary>
-        /// Represents the <see cref="EloCalculator.Tournament"/> the <see cref="TournamentPlayer"/> took part in.
-        /// </summary>
-        public Tournament Tournament
+        [JsonProperty("Player")]
+        public int PlayerID
         {
             get
             {
-                return this._Tournament;
-            }
-            
-            set
-            {
-                if (this.TournamentSet)
-                {
-                    throw new Exception("Tournament has already been set.");
-                }
-
-                this.TournamentSet = true;
-                this._Tournament = value;
+                return this.Player.ID;
             }
         }
 
-        /// <summary>
-        /// Represents the <see cref="TournamentPlayer"/>'s <see cref="Player"/> record.
-        /// </summary>
-        public Player Player
+        [JsonIgnore]
+        public Player Player { get; }
+
+        [JsonProperty("Games")]
+        public List<int> GamesID
         {
             get
             {
-                return this._Player;
-            }
-
-            set
-            {
-                if (this.PlayerSet)
-                {
-                    throw new Exception("Player has already been set.");
-                }
-
-                this.PlayerSet = true;
-                this._Player = value;
+                return this.Games.Select(i => i.ID).ToList();
             }
         }
 
-        /// <summary>
-        /// Represents the <see cref="TournamentPlayer"/>'s status. True means the <see cref="TournamentPlayer"/> is still participating in the <see cref="Tournament"/>.
-        /// </summary>
-        public bool Active
+        [JsonIgnore]
+        public List<Game> Games
         {
             get
             {
-                return this._Active;
-            }
+                List<Game> res = new List<Game>();
 
-            set
-            {
-                using (SqlConnection connection = new SqlConnection(Settings.connectionString))
+                foreach (TournamentRound round in this.Tournament.Rounds)
                 {
-                    connection.Open();
-
-                    using (SqlCommand setActive = new SqlCommand($"UPDATE [{this.Tournament.Name}] SET Active = @Active WHERE Player = @Player", connection))
+                    foreach (Game game in round.Games)
                     {
-                        setActive.Parameters.Add("@Active", SqlDbType.Bit).Value = this.Active;
-                        setActive.Parameters.Add("@Player", SqlDbType.Int).Value = this.Player.Id;
+                        if (game.White == this.Player)
+                        {
+                            res.Add(game);
+                            continue;
+                        }
+
+                        if (game.Black == this.Player)
+                        {
+                            res.Add(game);
+                            continue;
+                        }
                     }
                 }
 
-                this._Active = value;
+                return res;
             }
         }
-        
-        /// <summary>
-        /// Represents the <see cref="TournamentPlayer"/>'s conventional score. +1 for each win, +1/2 for each draw.
-        /// </summary>
-        public double Score
+
+        [JsonProperty]
+        public float Score
         {
             get
             {
-                using (SqlConnection connection = new SqlConnection(Settings.connectionString))
+                float res = 0;
+
+                foreach (Game game in this.Games)
                 {
-                    connection.Open();
-
-                    using (SqlCommand getScore = new SqlCommand($"SELECT Score FROM [{this.Tournament.Name}] WHERE Player = @Player", connection))
+                    if (game.Result == Result.Draw)
                     {
-                        getScore.Parameters.Add("@Player", SqlDbType.Int).Value = this.Player.Id;
+                        res += 0.5F;
+                        continue;
+                    }
 
-                        return (double)getScore.ExecuteScalar();
+                    if (game.White == this.Player && game.Result == Result.White)
+                    {
+                        res += 1;
+                        continue;
+                    }
+
+                    if (game.Black == this.Player && game.Result == Result.Black)
+                    {
+                        res += 1;
+                        continue;
                     }
                 }
-            }
-            
-            set
-            {
-                using (SqlConnection connection = new SqlConnection(Settings.connectionString))
+
+                foreach (TournamentRound round in this.Tournament.Rounds)
                 {
-                    connection.Open();
-
-                    using (SqlCommand setScore = new SqlCommand($"UPDATE [{this.Tournament.Name}] SET Score=@Score WHERE Player = @Player", connection))
+                    if (round.PairingBye == this)
                     {
-                        setScore.Parameters.Add("@Score", SqlDbType.Float).Value = value;
-                        setScore.Parameters.Add("@Player", SqlDbType.Int).Value = this.Player.Id;
+                        res += 1;
+                        continue;
+                    }
 
-                        setScore.ExecuteNonQuery();
+                    if (round.RequestedByes.Contains(this))
+                    {
+                        res += 0.5F;
+                        continue;
                     }
                 }
+
+                return res;
             }
         }
 
-        /// <summary>
-        /// Represents the <see cref="TournamentPlayer"/>'s Sonneborn-Berger (SB) score. SB = Sum of opponents's conventional score won against + (Sum of opponent's conventional score drew against / 2).
-        /// </summary>
-        public double SonnebornBerger
+        public double PerformanceRating
         {
             get
             {
-                using (SqlConnection connection = new SqlConnection(Settings.connectionString))
+                double averageOpponent = 0;
+
+                foreach (Game game in this.Games)
                 {
-                    connection.Open();
-
-                    using (SqlCommand getSB = new SqlCommand($"SELECT [Sonneborn-Berger] FROM [{this.Tournament.Name}] WHERE Player = @Player", connection))
+                    if (game.White == this.Player)
                     {
-                        getSB.Parameters.Add("@Player", SqlDbType.Int).Value = this.Player.Id;
+                        averageOpponent += game.Black.Rating;
+                        continue;
+                    }
 
-                        return (double)getSB.ExecuteScalar();
+                    if (game.Black == this.Player)
+                    {
+                        averageOpponent += game.White.Rating;
+                        continue;
                     }
                 }
-            }
 
-            set
-            {
-                using (SqlConnection connection = new SqlConnection(Settings.connectionString))
-                {
-                    connection.Open();
+                averageOpponent /= this.Games.Count;
 
-                    using (SqlCommand setScore = new SqlCommand($"UPDATE [{this.Tournament.Name}] SET [Sonneborn-Berger]=@SB WHERE Player = @Player", connection))
-                    {
-                        setScore.Parameters.Add("@SB", SqlDbType.Float).Value = value;
-                        setScore.Parameters.Add("@Player", SqlDbType.Int).Value = this.Player.Id;
-
-                        setScore.ExecuteNonQuery();
-                    }
-                }
+                return averageOpponent + (800 * (double)this.Score / (double)this.Games.Count) - 400;
             }
         }
 
-        /// <summary>
-        /// Represents the <see cref="TournamentPlayer"/>'s Buchholz score. Buchholz = Sum of opponents's conventional score won against + Sum of opponent's conventional score drew against.
-        /// </summary>
-        public double Buchholz
+        [JsonProperty]
+        public float SonnebornBerger
         {
             get
             {
-                using (SqlConnection connection = new SqlConnection(Settings.connectionString))
+                float res = 0;
+
+                foreach (Game game in this.Games)
                 {
-                    connection.Open();
-
-                    using (SqlCommand getScore = new SqlCommand($"SELECT Buchholz FROM [{this.Tournament.Name}] WHERE Player = @Player", connection))
+                    if (game.White == this.Player)
                     {
-                        getScore.Parameters.Add("@Player", SqlDbType.Int).Value = this.Player.Id;
+                        if (game.Result == Result.Draw)
+                        {
+                            res += this.Tournament.Players.Where(i => i.Player == game.Black).FirstOrDefault().Score / 2;
+                            continue;
+                        }
 
-                        return (double)getScore.ExecuteScalar();
+                        if (game.Result == Result.White)
+                        {
+                            res += this.Tournament.Players.Where(i => i.Player == game.Black).FirstOrDefault().Score;
+                            continue;
+                        }
+                    }
+
+                    if (game.Black == this.Player)
+                    {
+                        if (game.Result == Result.Draw)
+                        {
+                            res += this.Tournament.Players.Where(i => i.Player == game.White).FirstOrDefault().Score / 2;
+                            continue;
+                        }
+
+                        if (game.Result == Result.Black)
+                        {
+                            res += this.Tournament.Players.Where(i => i.Player == game.White).FirstOrDefault().Score;
+                            continue;
+                        }
                     }
                 }
-            }
 
-            set
-            {
-                using (SqlConnection connection = new SqlConnection(Settings.connectionString))
-                {
-                    connection.Open();
-
-                    using (SqlCommand setScore = new SqlCommand($"UPDATE [{this.Tournament.Name}] SET Buchholz=@BH WHERE Player = @Player", connection))
-                    {
-                        setScore.Parameters.Add("@BH", SqlDbType.Float).Value = value;
-                        setScore.Parameters.Add("@Player", SqlDbType.Int).Value = this.Player.Id;
-
-                        setScore.ExecuteNonQuery();
-                    }
-                }
+                return res;
             }
         }
 
-        /// <summary>
-        /// Initialises a new instance of the <see cref="TournamentPlayer"/> class and adds the record to the database.
-        /// </summary>
-        /// <param name="tournament">The <see cref="EloCalculator.Tournament"/> the <see cref="TournamentPlayer"/> took part in.</param>
-        /// <param name="player">The <see cref="TournamentPlayer"/>'s <see cref="Player"/> record.</param>
-        /// <param name="active">The <see cref="TournamentPlayer"/>'s status. True means the <see cref="TournamentPlayer"/> is still participating in the <see cref="Tournament"/>.</param>
-        public TournamentPlayer(Tournament tournament, Player player, bool active)
+        [JsonProperty]
+        public float Buchholz
         {
+            get
+            {
+                float res = 0;
+
+                foreach (Game game in this.Games)
+                {
+                    if (game.White == this.Player)
+                    {
+                        if (game.Result == Result.Draw || game.Result == Result.White)
+                        {
+                            res += this.Tournament.Players.Where(i => i.Player == game.Black).FirstOrDefault().Score;
+                            continue;
+                        }
+                    }
+
+                    if (game.Black == this.Player)
+                    {
+                        if (game.Result == Result.Draw || game.Result == Result.Black)
+                        {
+                            res += this.Tournament.Players.Where(i => i.Player == game.White).FirstOrDefault().Score;
+                            continue;
+                        }
+                    }
+                }
+
+                return res;
+            }
+        }
+
+        [JsonProperty]
+        public float MedianBuchholz
+        {
+            get
+            {
+                if (this.Games.Count <= 2)
+                {
+                    return 0;
+                }
+
+                List<float> scores = new List<float>();
+
+                foreach (Game game in this.Games)
+                {
+                    if (game.White == this.Player)
+                    {
+                        if (game.Result == Result.Draw || game.Result == Result.White)
+                        {
+                            scores.Add(this.Tournament.Players.Where(i => i.Player == game.Black).FirstOrDefault().Score);
+                            continue;
+                        }
+                    }
+
+                    if (game.Black == this.Player)
+                    {
+                        if (game.Result == Result.Draw || game.Result == Result.Black)
+                        {
+                            scores.Add(this.Tournament.Players.Where(i => i.Player == game.Black).FirstOrDefault().Score);
+                            continue;
+                        }
+                    }
+                }
+
+                scores.Sort();
+
+                scores.RemoveAt(0);
+
+                scores.Sort();
+
+                scores.Reverse();
+
+                scores.RemoveAt(0);
+
+                return scores.Sum();
+            }
+        }
+
+        [JsonProperty]
+        public float BuchholzCut1
+        {
+            get
+            {
+                if (this.Games.Count <= 1)
+                {
+                    return 0;
+                }
+
+                List<float> scores = new List<float>();
+
+                foreach (Game game in this.Games)
+                {
+                    if (game.White == this.Player)
+                    {
+                        if (game.Result == Result.Draw || game.Result == Result.White)
+                        {
+                            scores.Add(this.Tournament.Players.Where(i => i.Player == game.Black).FirstOrDefault().Score);
+                            continue;
+                        }
+                    }
+
+                    if (game.Black == this.Player)
+                    {
+                        if (game.Result == Result.Draw || game.Result == Result.Black)
+                        {
+                            scores.Add(this.Tournament.Players.Where(i => i.Player == game.Black).FirstOrDefault().Score);
+                            continue;
+                        }
+                    }
+                }
+
+                scores.Sort();
+
+                scores.RemoveAt(0);
+
+                return scores.Sum();
+            }
+        }
+
+        [JsonProperty]
+        public float Culmulative
+        {
+            get
+            {
+                List<float> scores = new List<float>
+                {
+                    0,
+                };
+
+                foreach (TournamentRound round in this.Tournament.Rounds)
+                {
+                    foreach (Game game in round.Games)
+                    {
+                        if (game.White == this.Player)
+                        {
+                            if (game.Result == Result.Draw)
+                            {
+                                scores.Add(scores.Last() + 0.5F);
+                            }
+
+                            if (game.Result == Result.White)
+                            {
+                                scores.Add(scores.Last() + 1);
+                            }
+                        }
+
+                        if (game.Black == this.Player)
+                        {
+                            if (game.Result == Result.Draw)
+                            {
+                                scores.Add(scores.Last() + 0.5F);
+                            }
+
+                            if (game.Result == Result.Black)
+                            {
+                                scores.Add(scores.Last() + 1);
+                            }
+                        }
+                    }
+                }
+
+                float byes = 0;
+
+                foreach (TournamentRound round in this.Tournament.Rounds)
+                {
+                    if (round.PairingBye == this)
+                    {
+                        byes += 1;
+                        continue;
+                    }
+
+                    if (round.RequestedByes.Contains(this))
+                    {
+                        byes += 0.5F;
+                        continue;
+                    }
+                }
+
+                return scores.Sum() - byes;
+            }
+        }
+
+        [JsonProperty]
+        public int Baumbach
+        {
+            get
+            {
+                int wins = 0;
+
+                foreach (Game game in this.Games)
+                {
+                    if (game.White == this.Player && game.Result == Result.White)
+                    {
+                        wins++;
+                        continue;
+                    }
+
+                    if (game.Black == this.Player && game.Result == Result.Black)
+                    {
+                        wins++;
+                        continue;
+                    }
+                }
+
+                return wins;
+            }
+        }
+
+        [JsonIgnore]
+        public (int White, int Black) Colours
+        {
+            get
+            {
+                (int white, int black) = (0, 0);
+
+                foreach (Game game in this.Games)
+                {
+                    if (game.White == this.Player)
+                    {
+                        white++;
+                        continue;
+                    }
+
+                    if (game.Black == this.Player)
+                    {
+                        black++;
+                        continue;
+                    }
+                }
+
+                return (white, black);
+            }
+        }
+
+        public TournamentPlayer(Tournament tournament, Player player)
+        {
+            this.ID = tournament.Players.Count;
             this.Tournament = tournament;
             this.Player = player;
-            this.Active = active;
+        }
 
-            using (SqlConnection connection = new SqlConnection(Settings.connectionString))
+        public float GetHeadToHeadScore(TournamentPlayer player)
+        {
+            if (player.Tournament != this.Tournament)
             {
-                connection.Open();
+                throw new EloCalculatorException("Players must be in the same tournament.");
+            }
 
-                using (SqlCommand addPlayerT = new SqlCommand($"INSERT INTO [{this.Tournament.Name}](Player, Active, Score, [Sonneborn-Berger], Buchholz) VALUES(@Player, @Active, 0, 0, 0)", connection))
+            float res = 0;
+
+            foreach (Game game in this.Games)
+            {
+                if (game.White == this.Player && game.Black == player.Player)
                 {
-                    addPlayerT.Parameters.Add("@Player", SqlDbType.Int).Value = this.Player.Id;
-                    addPlayerT.Parameters.Add("@Active", SqlDbType.Bit).Value = this.Active;
+                    if (game.Result == Result.White)
+                    {
+                        res += 1;
+                        continue;
+                    }
 
-                    addPlayerT.ExecuteNonQuery();
+                    if (game.Result == Result.Black)
+                    {
+                        res -= 1;
+                        continue;
+                    }
+                }
+
+                if (game.Black == this.Player && game.White == player.Player)
+                {
+                    if (game.Result == Result.White)
+                    {
+                        res -= 1;
+                        continue;
+                    }
+
+                    if (game.Result == Result.Black)
+                    {
+                        res += 1;
+                        continue;
+                    }
                 }
             }
+
+            return res;
         }
 
-        /// <summary>
-        /// Initialises a new instance of the <see cref="TournamentPlayer"/> class.
-        /// </summary>
-        /// <param name="tournament">The <see cref="EloCalculator.Tournament"/> the <see cref="TournamentPlayer"/> took part in.</param>
-        /// <param name="player">The <see cref="TournamentPlayer"/>'s <see cref="Player"/> record.</param>
-        /// <param name="active">The <see cref="TournamentPlayer"/>'s status. True means the <see cref="TournamentPlayer"/> is still participating in the <see cref="Tournament"/>.</param>
-        /// <param name="score">The <see cref="TournamentPlayer"/>'s conventional score. +1 for each win, +1/2 for each draw.</param>
-        /// <param name="sonnebornBerger">The <see cref="TournamentPlayer"/>'s Sonneborn-Berger (SB) score. SB = Sum of opponents's conventional score won against + (Sum of opponent's conventional score drew against / 2).</param>
-        /// <param name="buchholz">The <see cref="TournamentPlayer"/>'s Buchholz score. Buchholz = Sum of opponents's conventional score won against + Sum of opponent's conventional score drew against.</param>
-        public TournamentPlayer(Tournament tournament, Player player, bool active, double score, double sonnebornBerger, double buchholz)
+        public override string ToString()
         {
-            this.Tournament = tournament;
-            this.Player = player;
-            this.Active = active;
-            this.Score = score;
-            this.SonnebornBerger = sonnebornBerger;
-            this.Buchholz = buchholz;
-        }
-
-        /// <summary>
-        /// Updates <see cref="Score"/>.
-        /// </summary>
-        /// <param name="side">The <see cref="Side"/> of the <see cref="TournamentPlayer"/> in the <see cref="Game"/>.</param>
-        /// <param name="result">The <see cref="Game"/>'s <see cref="Game.Result"/>.</param>
-        public void UpdateScore(Side side, Result result)
-        {
-            double increment = 0;
-
-            // Draw
-            if (result == Result.Draw)
-            {
-                increment = 0.5;
-            }
-
-            // Won as White
-            if (side == Side.White && result == Result.White)
-            {
-                increment = 1;
-            }
-
-            // Won as Black
-            else if (side == Side.Black && result == Result.Black)
-            {
-                increment = 1;
-            }
-
-            using (SqlConnection connection = new SqlConnection(Settings.connectionString))
-            {
-                connection.Open();
-
-                using (SqlCommand incScore = new SqlCommand($"UPDATE [{this.Tournament.Name}] SET Score= Score + @Increment WHERE Player LIKE @Player", connection))
-                {
-                    incScore.Parameters.Add("@Increment", SqlDbType.Float).Value = increment;
-                    incScore.Parameters.Add("@Player", SqlDbType.Int).Value = this.Player.Id;
-
-                    incScore.ExecuteNonQuery();
-                }
-            }
-        }
-
-        /// <summary>
-        /// Updates <see cref="SonnebornBerger"/>.
-        /// </summary>
-        public void UpdateSB()
-        {
-            double winscore = 0;
-            double drawscore = 0;
-
-            // White + Win
-            winscore += Tournament.GetOpponentScores(this.Player, Side.White, Result.White);
-
-            // Black + Win
-            winscore += Tournament.GetOpponentScores(this.Player, Side.Black, Result.Black);
-
-            // White + Draw
-            drawscore += Tournament.GetOpponentScores(this.Player, Side.White, Result.Draw);
-
-            // Black + Draw
-            drawscore += Tournament.GetOpponentScores(this.Player, Side.Black, Result.Draw);
-
-            this.SonnebornBerger = winscore + drawscore / 2;
-        }
-
-        /// <summary>
-        /// Updates <see cref="Buchholz"/>.
-        /// </summary>
-        public void UpdateBuchholz()
-        {
-            double score = 0;
-
-            // White + Win
-            score += Tournament.GetOpponentScores(this.Player, Side.White, Result.White);
-            // Black + Win
-            score += Tournament.GetOpponentScores(this.Player, Side.Black, Result.Black);
-
-            // White + Draw
-            score += Tournament.GetOpponentScores(this.Player, Side.White, Result.Draw);
-            // Black + Draw
-            score += Tournament.GetOpponentScores(this.Player, Side.Black, Result.Draw);
-
-            // White + Loss
-            score += Tournament.GetOpponentScores(this.Player, Side.White, Result.Black);
-            // Black + Loss
-            score += Tournament.GetOpponentScores(this.Player, Side.Black, Result.White);
-
-            this.Buchholz = score;
-        }
-
-        /// <summary>
-        /// Awards the <see cref="TournamentPlayer"/> a 1-point BYE for a <see cref="TournamentRound"/>.
-        /// </summary>
-        /// <param name="round">The <see cref="TournamentRound"/> to award a BYE for.</param>
-        public void AwardBye(TournamentRound round)
-        {
-            this.Tournament.byes[round] = this;
+            return JsonConvert.SerializeObject(this);
         }
     }
 }
