@@ -12,7 +12,7 @@
 
         public static int KCoefficient = 40;
 
-        public static int benchmarkCoeff = 400;
+        public static int BenchmarkCoefficient = 400;
 
         public static List<Player> Players = new List<Player>();
 
@@ -71,9 +71,9 @@
                     }
             }
 
-            double expectedScoreA = 1 / (1 + Math.Pow(10, (blackRating - whiteRating) / benchmarkCoeff));
+            double expectedScoreA = 1 / (1 + Math.Pow(10, (blackRating - whiteRating) / BenchmarkCoefficient));
 
-            double expectedScoreB = 1 / (1 + Math.Pow(10, (whiteRating - blackRating) / benchmarkCoeff));
+            double expectedScoreB = 1 / (1 + Math.Pow(10, (whiteRating - blackRating) / BenchmarkCoefficient));
 
             white.Rating = whiteRating + KCoefficient * (scoreA - expectedScoreA);
             black.Rating = blackRating + KCoefficient * (scoreB - expectedScoreB);
