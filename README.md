@@ -15,7 +15,6 @@ An example program can be found [here](src/EloCalculator.Example/Program.cs).
   - [Median Buchholz](https://en.wikipedia.org/wiki/Tie-breaking_in_Swiss-system_tournaments#Median_/_Buchholz_/_Solkoff)
   - Buchholz Cut 1 (Buchholz but the lowest score is not considered)
   - [Culmulative](https://en.wikipedia.org/wiki/Tie-breaking_in_Swiss-system_tournaments#Cumulative)
-  - [Culmulative Opponent's Score](https://en.wikipedia.org/wiki/Tie-breaking_in_Swiss-system_tournaments#Cumulative_opponent's_score)
   - [Baumbach](https://en.wikipedia.org/wiki/Tie-breaking_in_Swiss-system_tournaments#Most_wins_(Baumbach))
 - Tournament types
   - [Dutch](https://en.wikipedia.org/wiki/Swiss-system_tournament#Dutch_system)
