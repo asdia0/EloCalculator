@@ -16,20 +16,27 @@
         public static List<Game> Games = new List<Game>();
 
         /// <summary>
-        /// Load <see cref="Game"/>s from a file as a JSON object.
+        /// Clear <see cref="Games"/> and load <see cref="Game"/>s from a file as a JSON object.
         /// </summary>
         /// <param name="path">The path to the file to load from.</param>
         public static void Load(string path)
         {
+            Games.Clear();
+
             string text = File.ReadAllText(path);
 
             List<Game> games = JsonConvert.DeserializeObject<List<Game>>(text);
 
-            foreach (Game game in games.ToList())
+            foreach (Game game in games)
             {
-                if (Games.Where(i => i.ID == game.ID).Any())
+                if (!PlayerDatabase.Players.Contains(game.White))
                 {
-                    games.Remove(game);
+                    PlayerDatabase.Players.Add(game.White);
+                }
+
+                if (!PlayerDatabase.Players.Contains(game.Black))
+                {
+                    PlayerDatabase.Players.Add(game.Black);
                 }
             }
 
