@@ -78,6 +78,11 @@
         /// <param name="rated">A value indicating whether the game affects <paramref name="white"/> and <paramref name="black"/>'s ratings.</param>
         public Game(Player white, Player black, Result result, DateTime dateTime, bool rated)
         {
+            if (white == black)
+            {
+                throw new EloCalculatorException("Players must not be the same.");
+            }
+
             this.ID = GameDatabase.Games.Count;
             this.White = white;
             this.Black = black;
