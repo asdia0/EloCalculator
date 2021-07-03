@@ -22,6 +22,5 @@ An example program can be found [here](src/EloCalculator.Example/Program.cs).
   - [Danish](https://en.wikipedia.org/wiki/Swiss-system_tournament#Danish_system)
   - [Round-Robin](https://en.wikipedia.org/wiki/Chess_tournament#Round-robin)
   - [Arena](https://support.chess.com/article/335-what-are-arena-tournaments)
-  - [Match](https://www.chess.com/terms/chess-match)
 - Tournament pairings
 - Leaderboards (global and tournament)
