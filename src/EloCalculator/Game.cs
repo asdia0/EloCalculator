@@ -11,7 +11,7 @@
         /// <summary>
         /// Gets the game's unique identification number.
         /// </summary>
-        [JsonProperty("ID")]
+        [JsonProperty]
         public int ID { get; }
 
         /// <summary>
@@ -53,19 +53,19 @@
         /// <summary>
         /// Gets the game's <see cref="Result"/>.
         /// </summary>
-        [JsonProperty("Result")]
+        [JsonProperty]
         public Result Result { get; }
 
         /// <summary>
         /// Gets the time at which the game was played.
         /// </summary>
-        [JsonProperty("DateTime")]
+        [JsonProperty]
         public DateTime DateTime { get; }
 
         /// <summary>
         /// Gets a value indicating whether the game affects <see cref="White"/> and <see cref="Black"/>'s ratings.
         /// </summary>
-        [JsonProperty("Rated")]
+        [JsonProperty]
         public bool Rated { get; }
 
         /// <summary>
