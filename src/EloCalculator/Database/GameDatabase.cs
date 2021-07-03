@@ -5,10 +5,20 @@
     using System.Linq;
     using Newtonsoft.Json;
 
+    /// <summary>
+    /// Contains methods related to <see cref="Game"/>s.
+    /// </summary>
     public static class GameDatabase
     {
+        /// <summary>
+        /// A list of all games loaded.
+        /// </summary>
         public static List<Game> Games = new List<Game>();
 
+        /// <summary>
+        /// Load <see cref="Game"/>s from a file as a JSON object.
+        /// </summary>
+        /// <param name="path">The path to the file to load from.</param>
         public static void Load(string path)
         {
             string text = File.ReadAllText(path);
@@ -26,9 +36,13 @@
             Games.AddRange(games);
         }
 
-        public static string Export()
+        /// <summary>
+        /// Exports <see cref="Games"/> to a file as a JSON object.
+        /// </summary>
+        /// <param name="path">The path to the file to export to.</param>
+        public static void Export(string path)
         {
-            return JsonConvert.SerializeObject(Games, Formatting.Indented);
+            File.WriteAllText(path, JsonConvert.SerializeObject(Games, Formatting.Indented));
         }
     }
 }
