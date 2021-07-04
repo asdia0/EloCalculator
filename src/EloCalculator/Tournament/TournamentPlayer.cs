@@ -258,11 +258,6 @@
         {
             get
             {
-                if (this.Games.Count <= 2)
-                {
-                    return 0;
-                }
-
                 List<float> scores = new List<float>();
 
                 foreach (Game game in this.Games)
@@ -284,6 +279,11 @@
                             continue;
                         }
                     }
+                }
+
+                if (scores.Count <= 2)
+                {
+                    return 0;
                 }
 
                 scores.Sort();
