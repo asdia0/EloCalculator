@@ -26,7 +26,7 @@
         [TestMethod]
         public void GameDatabaseLoadAndExport()
         {
-            Tournament game = new("Tournament 1", TournamentType.Arena);
+            _ = new Tournament("Tournament 1", TournamentType.Arena);
 
             TournamentDatabase.Export("tournaments.json");
 

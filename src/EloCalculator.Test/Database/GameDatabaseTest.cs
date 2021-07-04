@@ -27,7 +27,7 @@
         [TestMethod]
         public void GameDatabaseLoadAndExport()
         {
-            Game game = new(new("Player 1"), new("Player 2"), Result.White, DateTime.Now, true);
+            _ = new Game(new("Player 1"), new("Player 2"), Result.White, DateTime.Now, true);
 
             GameDatabase.Export("game.json");
 

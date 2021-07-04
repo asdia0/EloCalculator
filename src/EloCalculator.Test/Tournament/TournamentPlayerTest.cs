@@ -124,7 +124,7 @@
             Player player2 = new("Player 2");
 
             TournamentPlayer tplayer1 = new(tournament, player1);
-            TournamentPlayer tplayer2 = new(tournament, player2);
+            _ = new TournamentPlayer(tournament, player2);
 
             List<Game> games = new()
             {
@@ -152,7 +152,7 @@
             Player player2 = new("Player 2");
 
             TournamentPlayer tplayer1 = new(tournament, player1);
-            TournamentPlayer tplayer2 = new(tournament, player2);
+            _ = new TournamentPlayer(tournament, player2);
 
             List<Game> games = new()
             {
@@ -180,7 +180,7 @@
             Player player2 = new("Player 2");
 
             TournamentPlayer tplayer1 = new(tournament, player1);
-            TournamentPlayer tplayer2 = new(tournament, player2);
+            _ = new TournamentPlayer(tournament, player2);
 
             List<Game> games = new()
             {
@@ -208,7 +208,7 @@
             Player player2 = new("Player 2");
 
             TournamentPlayer tplayer1 = new(tournament, player1);
-            TournamentPlayer tplayer2 = new(tournament, player2);
+            _ = new TournamentPlayer(tournament, player2);
 
             List<Game> games = new()
             {
@@ -236,7 +236,7 @@
             Player player2 = new("Player 2");
 
             TournamentPlayer tplayer1 = new(tournament, player1);
-            TournamentPlayer tplayer2 = new(tournament, player2);
+            _ = new TournamentPlayer(tournament, player2);
 
             List<Game> games = new()
             {
@@ -264,7 +264,7 @@
             Player player2 = new("Player 2");
 
             TournamentPlayer tplayer1 = new(tournament, player1);
-            TournamentPlayer tplayer2 = new(tournament, player2);
+            _ = new TournamentPlayer(tournament, player2);
 
             List<Game> games = new()
             {
@@ -291,8 +291,8 @@
             Player player1 = new("Player 1");
             Player player2 = new("Player 2");
 
-            TournamentPlayer tplayer1 = new(tournament, player1);
-            TournamentPlayer tplayer2 = new(tournament, player2);
+            TournamentPlayer tplayer = new(tournament, player1);
+            _ = new TournamentPlayer(tournament, player2);
 
             List<Game> games = new()
             {
@@ -305,7 +305,7 @@
 
             tournament.Rounds[0].AddGames(games);
 
-            Assert.AreEqual(1, tplayer1.Baumbach);
+            Assert.AreEqual(1, tplayer.Baumbach);
 
             TournamentDatabase.Tournaments.Clear();
             PlayerDatabase.Players.Clear();
@@ -320,7 +320,7 @@
             Player player2 = new("Player 2");
 
             TournamentPlayer tplayer1 = new(tournament, player1);
-            TournamentPlayer tplayer2 = new(tournament, player2);
+            _ = new TournamentPlayer(tournament, player2);
 
             List<Game> games = new()
             {

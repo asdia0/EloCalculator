@@ -29,7 +29,7 @@
             Player player1 = new("Player 1");
             Player player2 = new("Player 2");
 
-            Game game = new(player1, player2, Result.White, DateTime.Now, true);
+            _ = new Game(player1, player2, Result.White, DateTime.Now, true);
 
             Assert.AreEqual(1020, player1.Rating);
             Assert.AreEqual(980, player2.Rating);
@@ -44,7 +44,7 @@
             Player player1 = new("Player 1");
             Player player2 = new("Player 2");
 
-            Game game = new(player1, player2, Result.White, DateTime.Now, false);
+            _ = new Game(player1, player2, Result.White, DateTime.Now, false);
 
             Assert.AreEqual(1000, player1.Rating);
             Assert.AreEqual(1000, player2.Rating);

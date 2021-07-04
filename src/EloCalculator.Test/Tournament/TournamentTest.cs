@@ -322,7 +322,7 @@
                 tplayer3,
             });
 
-            Game game = new(player1, player2, Result.White, DateTime.Now, true);
+            _ = new Game(player1, player2, Result.White, DateTime.Now, true);
 
             List<(TournamentPlayer, TournamentPlayer?)> expected = new()
             {
@@ -360,7 +360,7 @@
                 tplayer4,
             });
 
-            Game game = new(player1, player2, Result.White, DateTime.Now, true);
+            _ = new Game(player1, player2, Result.White, DateTime.Now, true);
 
             List<(TournamentPlayer, TournamentPlayer?)> expected = new()
             {
@@ -395,7 +395,7 @@
                 tplayer3,
             });
 
-            Game game = new(player1, player2, Result.White, DateTime.Now, true);
+            _ = new Game(player1, player2, Result.White, DateTime.Now, true);
 
             List<(TournamentPlayer, TournamentPlayer?)> expected = new()
             {
@@ -433,7 +433,7 @@
                 tplayer4,
             });
 
-            Game game = new(player1, player2, Result.White, DateTime.Now, true);
+            _ = new Game(player1, player2, Result.White, DateTime.Now, true);
 
             List<(TournamentPlayer, TournamentPlayer?)> expected = new()
             {
@@ -549,7 +549,7 @@
                 tplayer3,
             });
 
-            Game game = new(player1, player2, Result.White, DateTime.Now, true);
+            _ = new Game(player1, player2, Result.White, DateTime.Now, true);
 
             List<(TournamentPlayer, TournamentPlayer?)> expected = new()
             {
@@ -587,7 +587,7 @@
                 tplayer4,
             });
 
-            Game game = new(player1, player2, Result.White, DateTime.Now, true);
+            _ = new Game(player1, player2, Result.White, DateTime.Now, true);
 
             List<(TournamentPlayer, TournamentPlayer?)> expected = new()
             {
@@ -703,7 +703,7 @@
                 tplayer3,
             });
 
-            Game game = new(player1, player2, Result.White, DateTime.Now, true);
+            _ = new Game(player1, player2, Result.White, DateTime.Now, true);
 
             List<(TournamentPlayer, TournamentPlayer?)> expected = new()
             {
@@ -741,7 +741,7 @@
                 tplayer4,
             });
 
-            Game game = new(player1, player2, Result.White, DateTime.Now, true);
+            _ = new Game(player1, player2, Result.White, DateTime.Now, true);
 
             List<(TournamentPlayer, TournamentPlayer?)> expected = new()
             {
