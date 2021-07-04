@@ -126,6 +126,18 @@
         }
 
         [TestMethod]
+        public void TournamentAddRound()
+        {
+            Tournament tournament = new("Tournament 1", TournamentType.RoundRobin);
+
+            tournament.AddRound();
+
+            Assert.AreEqual(1, tournament.Rounds.Count);
+
+            TournamentDatabase.Tournaments.Clear();
+        }
+
+        [TestMethod]
         public void TournamentAddRoundLocal()
         {
             Tournament tournament = new("Tournament 1", TournamentType.RoundRobin);
