@@ -82,7 +82,7 @@
         /// <param name="games">A list of <see cref="Game"/>s played during this round.</param>
         public TournamentRound(Tournament tournament)
         {
-            this.ID = tournament.Rounds.Count;
+            this.ID = tournament.Rounds.Any() ? tournament.Rounds.Last().ID + 1 : 0;
             this.Tournament = tournament;
             this.RequestedByes = new();
             this.Games = new();

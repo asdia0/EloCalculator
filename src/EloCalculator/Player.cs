@@ -94,7 +94,7 @@
         /// <param name="name">The player's name.</param>
         public Player(string name)
         {
-            this.ID = PlayerDatabase.Players.Count;
+            this.ID = PlayerDatabase.Players.Any() ? PlayerDatabase.Players.Last().ID + 1 : 0;
             this.Name = name;
             this.Rating = PlayerDatabase.DefaultRating;
 

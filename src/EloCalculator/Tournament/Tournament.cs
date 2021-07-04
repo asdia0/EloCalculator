@@ -49,7 +49,7 @@
         /// <param name="rounds">A list of <see cref="TournamentRound"/>s being held during the tournament.</param>
         public Tournament(string name, TournamentType type)
         {
-            this.ID = TournamentDatabase.Tournaments.Count;
+            this.ID = TournamentDatabase.Tournaments.Any() ? TournamentDatabase.Tournaments.Last().ID + 1 : 0;
             this.Name = name;
             this.Type = type;
             this.Players = new List<TournamentPlayer>();

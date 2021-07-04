@@ -1,6 +1,7 @@
 ﻿namespace EloCalculator
 {
     using System;
+    using System.Linq;
     using Newtonsoft.Json;
 
     /// <summary>
@@ -83,7 +84,7 @@
                 throw new EloCalculatorException("Players must not be the same.");
             }
 
-            this.ID = GameDatabase.Games.Count;
+            this.ID = GameDatabase.Games.Any() ? GameDatabase.Games.Last().ID + 1 : 0;
             this.White = white;
             this.Black = black;
             this.Result = result;

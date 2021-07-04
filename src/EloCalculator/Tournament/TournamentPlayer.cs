@@ -412,7 +412,7 @@
         /// <param name="player">The player's <see cref="EloCalculator.Player"/>.</param>
         public TournamentPlayer(Tournament tournament, Player player)
         {
-            this.ID = tournament.Players.Count;
+            this.ID = tournament.Players.Any() ? tournament.Players.Last().ID + 1 : 0;
             this.Tournament = tournament;
             this.Player = player;
             this.Active = true;
