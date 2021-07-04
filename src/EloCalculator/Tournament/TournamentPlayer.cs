@@ -315,18 +315,20 @@
 
                 foreach (TournamentRound round in this.Tournament.Rounds)
                 {
+                    float roundScore = 0;
+
                     foreach (Game game in round.Games)
                     {
                         if (game.White == this.Player)
                         {
                             if (game.Result == Result.Draw)
                             {
-                                scores.Add(scores.Last() + 0.5F);
+                                roundScore += 0.5F;
                             }
 
                             if (game.Result == Result.White)
                             {
-                                scores.Add(scores.Last() + 1);
+                                roundScore += 1;
                             }
                         }
 
@@ -334,15 +336,17 @@
                         {
                             if (game.Result == Result.Draw)
                             {
-                                scores.Add(scores.Last() + 0.5F);
+                                roundScore += 0.5F;
                             }
 
                             if (game.Result == Result.Black)
                             {
-                                scores.Add(scores.Last() + 1);
+                                roundScore += 1;
                             }
                         }
                     }
+
+                    scores.Add(scores.Last() + roundScore);
                 }
 
                 float byes = 0;
