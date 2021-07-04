@@ -380,7 +380,7 @@
         }
 
         /// <summary>
-        /// Adds a list of players to <see cref="Players"/>.
+        /// Adds a list of <see cref="TournamentPlayer"/> to <see cref="Players"/>.
         /// </summary>
         /// <param name="players">The list of <see cref="TournamentPlayer"/>s to add.</param>
         public void AddPlayers(List<TournamentPlayer> players)
