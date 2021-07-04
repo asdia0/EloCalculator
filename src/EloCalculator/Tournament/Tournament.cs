@@ -85,11 +85,11 @@
 
                         if (higher.Colours.Black > higher.Colours.White)
                         {
-                            res.Add((lower, higher));
+                            res.Add((higher, lower));
                         }
                         else
                         {
-                            res.Add((higher, lower));
+                            res.Add((lower, higher));
                         }
                     }
 
@@ -120,11 +120,11 @@
 
                         if (higher.Colours.Black > higher.Colours.White)
                         {
-                            res.Add((lower, higher));
+                            res.Add((higher, lower));
                         }
                         else
                         {
-                            res.Add((higher, lower));
+                            res.Add((lower, higher));
                         }
                     }
 
@@ -193,11 +193,11 @@
 
                         if (target.Colours.Black > target.Colours.White)
                         {
-                            res.Add((partner, target));
+                            res.Add((target, partner));
                         }
                         else
                         {
-                            res.Add((target, partner));
+                            res.Add((partner, target));
                         }
 
                         top.Remove(target);
@@ -245,11 +245,11 @@
 
                         if (higher.Colours.Black > higher.Colours.White)
                         {
-                            res.Add((lower, higher));
+                            res.Add((higher, lower));
                         }
                         else
                         {
-                            res.Add((higher, lower));
+                            res.Add((lower, higher));
                         }
 
                         monradAvail.Remove(higher);
