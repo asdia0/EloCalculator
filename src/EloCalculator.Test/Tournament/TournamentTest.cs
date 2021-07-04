@@ -314,7 +314,7 @@
             TournamentPlayer tplayer1 = new(tournament, player1);
             TournamentPlayer tplayer2 = new(tournament, player2);
             TournamentPlayer tplayer3 = new(tournament, player3);
-            
+
             tournament.AddPlayers(new()
             {
                 tplayer1,

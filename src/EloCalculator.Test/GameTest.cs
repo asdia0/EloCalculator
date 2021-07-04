@@ -15,7 +15,7 @@ namespace EloCalculator.Test
             Result result = Result.White;
             DateTime dateTime = DateTime.Now;
             bool rated = true;
-            
+
             Game game = new(white, black, result, dateTime, rated);
 
             Assert.AreEqual(0, game.ID);
