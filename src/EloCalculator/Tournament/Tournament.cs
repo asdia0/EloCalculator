@@ -47,13 +47,13 @@
         /// <param name="type">The tournament's type.</param>
         /// <param name="players">A list of <see cref="TournamentPlayer"/>s participating in the tournament.</param>
         /// <param name="rounds">A list of <see cref="TournamentRound"/>s being held during the tournament.</param>
-        public Tournament(string name, TournamentType type, List<TournamentPlayer> players = null, List<TournamentRound> rounds = null)
+        public Tournament(string name, TournamentType type)
         {
             this.ID = TournamentDatabase.Tournaments.Count;
             this.Name = name;
             this.Type = type;
-            this.Players = players ?? new List<TournamentPlayer>();
-            this.Rounds = rounds ?? new List<TournamentRound>();
+            this.Players = new List<TournamentPlayer>();
+            this.Rounds = new List<TournamentRound>();
 
             TournamentDatabase.Tournaments.Add(this);
         }
