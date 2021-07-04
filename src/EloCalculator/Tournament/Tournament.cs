@@ -219,18 +219,18 @@
                         monradAvail = rankings;
                     }
 
-                    for (int i = 0; i < monradAvail.Count; i += 2)
+                    while (monradAvail.Count != 0)
                     {
-                        if (monradAvail.Count - 1 == i)
+                        if (monradAvail.Count == 1)
                         {
-                            res.Add((monradAvail[i], null));
-                            continue;
+                            res.Add((monradAvail[0], null));
+                            return res;
                         }
 
-                        TournamentPlayer higher = monradAvail[i];
+                        TournamentPlayer higher = monradAvail[0];
                         TournamentPlayer lower = null;
 
-                        Dictionary<TournamentPlayer, int> timesPlayed = new Dictionary<TournamentPlayer, int>();
+                        Dictionary<TournamentPlayer, int> timesPlayed = new();
 
                         foreach (TournamentPlayer player in monradAvail)
                         {
@@ -242,7 +242,21 @@
                             timesPlayed.Add(player, higher.Games.Where(i => i.White == player.Player || i.Black == player.Player).ToList().Count);
                         }
 
-                        lower = timesPlayed.Aggregate((l, r) => l.Value < r.Value ? l : r).Key;
+                        int lowest = timesPlayed.Aggregate((l, r) => l.Value < r.Value ? l : r).Value;
+
+                        foreach (TournamentPlayer player in monradAvail)
+                        {
+                            if (player == higher)
+                            {
+                                continue;
+                            }
+
+                            if (timesPlayed[player] == lowest)
+                            {
+                                lower = player;
+                                break;
+                            }
+                        }
 
                         if (higher.Colours.Black > higher.Colours.White)
                         {
@@ -252,75 +266,97 @@
                         {
                             res.Add((lower, higher));
                         }
+
+                        monradAvail.RemoveAt(0);
+                        monradAvail.Remove(lower);
                     }
 
                     return res;
 
                 case TournamentType.RoundRobin:
-                    List<(int, int?)> list1 = new List<(int, int?)>();
-                    List<(int, int?)> list2 = new List<(int, int?)>();
-                    int playerCount = this.Players.Count;
+                    // Generate initial pairings (Round 1)
+                    List<(int?, int?)> initialRR = new();
 
-                    for (int i = 0; i < Floor((double)playerCount / 2); i++)
+                    if (rankings.Count % 2 == 0)
                     {
-                        list1.Add((i, playerCount - i - 1));
-                    }
-
-                    if (playerCount % 2 == 1)
-                    {
-                        list1.Add(((int)Floor((double)playerCount / 2), null));
-                    }
-
-                    if (this.Rounds.Count == 0)
-                    {
-                        foreach ((int white, int? black) in list1)
+                        for (int i = 0; i <= (rankings.Count / 2) - 1; i++)
                         {
-                            res.Add((this.Players[white], black == null ? null : this.Players[(int)black]));
-                        }
-
-                        return res;
-                    }
-
-                    foreach ((int white, int? black) in list1)
-                    {
-                        if (white == playerCount - 1)
-                        {
-                            list2.Add((white, black == null ? null : (black * this.Rounds.Count) % (playerCount - 1)));
-                            continue;
-                        }
-
-                        if (black == playerCount - 1)
-                        {
-                            list2.Add(((white * this.Rounds.Count) % (playerCount - 1), black));
-                            continue;
-                        }
-
-                        list2.Add(((white * this.Rounds.Count) % (playerCount - 1), black == null ? null : (black * this.Rounds.Count) % (playerCount - 1)));
-                    }
-
-                    if (playerCount % 2 == 0)
-                    {
-                        foreach ((int white, int? black) in list2)
-                        {
-                            res.Add((this.Players[white], black == null ? null : this.Players[(int)black]));
+                            initialRR.Add((i, rankings.Count - 1 - i));
                         }
                     }
                     else
                     {
-                        foreach ((int white, int? black) in list2)
+                        for (int i = 0; i <= (int)Floor((double)rankings.Count / 2) - 1; i++)
                         {
-                            if (black == null)
+                            initialRR.Add((i, rankings.Count - 2 - i));
+                        }
+
+                        initialRR.Add((rankings.Count - 1, null));
+                    }
+
+                    // Rotate initialRR
+                    List<(int?, int?)> aux = new();
+
+                    for (int i = 0; i < this.Rounds.Count; i++)
+                    {
+                        aux = initialRR.ToList();
+
+                        for (int j = 0; j < initialRR.Count; j++)
+                        {
+                            (int? white, int? black) = aux[j];
+
+                            if (j == 0)
                             {
-                                res.Add((this.Players[white], null));
+                                initialRR[j] = (0, aux[j + 1].Item1);
+                            }
+                            else if (j == initialRR.Count - 1)
+                            {
+                                initialRR[j] = (aux[j].Item2, aux[j - 1].Item2);
                             }
                             else
                             {
-                                res.Add((this.Players[(int)black], this.Players[white]));
+                                initialRR[j] = (aux[j + 1].Item1, aux[j - 1].Item2);
+                            }
+                        }
+
+                        foreach ((int?, int?) elem in initialRR)
+                        {
+                            System.Console.WriteLine(elem);
+                        }
+                    }
+
+                    // Switch sides if target round number is odd.
+                    if (this.Rounds.Count % 2 == 1)
+                    {
+                        aux = initialRR.ToList();
+
+                        for (int i = 0; i < initialRR.Count; i++)
+                        {
+                            (int? white, int? black) = aux[i];
+
+                            if (white == null)
+                            {
+                                initialRR[i] = (black, null);
+                            }
+                            else if (black == null)
+                            {
+                                initialRR[i] = (white, null);
+                            }
+                            else
+                            {
+                                initialRR[i] = ((int)black, white);
                             }
                         }
                     }
 
+                    // Convert to TournamentPlayer
+                    foreach ((int? white, int? black) in initialRR)
+                    {
+                        res.Add((white == null ? null : this.Players[(int)white], black == null ? null : this.Players[(int)black]));
+                    }
+
                     return res;
+
                 default:
                     throw new EloCalculatorException("Unrecognised tournament type.");
             }
