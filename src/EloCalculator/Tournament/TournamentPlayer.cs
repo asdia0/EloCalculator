@@ -264,20 +264,14 @@
                 {
                     if (game.White == this.Player)
                     {
-                        if (game.Result == Result.Draw || game.Result == Result.White)
-                        {
-                            scores.Add(this.Tournament.Players.Where(i => i.Player == game.Black).FirstOrDefault().Score);
-                            continue;
-                        }
+                        scores.Add(this.Tournament.Players.Where(i => i.Player == game.Black).FirstOrDefault().Score);
+                        continue;
                     }
 
                     if (game.Black == this.Player)
                     {
-                        if (game.Result == Result.Draw || game.Result == Result.Black)
-                        {
-                            scores.Add(this.Tournament.Players.Where(i => i.Player == game.Black).FirstOrDefault().Score);
-                            continue;
-                        }
+                        scores.Add(this.Tournament.Players.Where(i => i.Player == game.Black).FirstOrDefault().Score);
+                        continue;
                     }
                 }
 
@@ -407,24 +401,7 @@
         {
             get
             {
-                (int white, int black) = (0, 0);
-
-                foreach (Game game in this.Games)
-                {
-                    if (game.White == this.Player)
-                    {
-                        white++;
-                        continue;
-                    }
-
-                    if (game.Black == this.Player)
-                    {
-                        black++;
-                        continue;
-                    }
-                }
-
-                return (white, black);
+                return (this.Games.Where(i => i.White == this.Player).ToList().Count, this.Games.Where(i => i.Black == this.Player).ToList().Count);
             }
         }
 
