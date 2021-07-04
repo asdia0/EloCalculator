@@ -145,7 +145,7 @@
                     List<TournamentPlayer> top = new List<TournamentPlayer>();
                     List<TournamentPlayer> bottom = new List<TournamentPlayer>();
 
-                    for (int i = 0; i < (int)Ceiling((double)initial.Count / 2); i++)
+                    for (int i = 0; i < Ceiling((double)initial.Count / 2); i++)
                     {
                         top.Add(initial[i]);
                     }
