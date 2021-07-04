@@ -397,6 +397,38 @@
         }
 
         /// <summary>
+        /// Adds a <see cref="TournamentRound"/> to <see cref="Rounds"/>.
+        /// </summary>
+        /// <param name="round">The <see cref="TournamentRound"/> to add.</param>
+        public void AddRound(TournamentRound round)
+        {
+            if (this.Rounds.Contains(round) || round.Tournament != this)
+            {
+                return;
+            }
+
+            this.Rounds.Add(round);
+        }
+
+
+        /// <summary>
+        /// Adds a list of <see cref="TournamentRound"/>s to <see cref="Rounds"/>.
+        /// </summary>
+        /// <param name="rounds">The list of <see cref="TournamentRound"/>s to add.</param>
+        public void AddRounds(List<TournamentRound> rounds)
+        {
+            foreach (TournamentRound round in rounds)
+            {
+                if (this.Rounds.Contains(round) || round.Tournament != this)
+                {
+                    continue;
+                }
+
+                this.Rounds.Add(round);
+            }
+        }
+
+        /// <summary>
         /// Gets a JSON string representing the game.
         /// </summary>
         /// <returns>A JSON string that represents the game.</returns>
