@@ -356,6 +356,10 @@
             }
         }
 
+        /// <summary>
+        /// Gets a leaderboard of all active players in <see cref="Players"/> based upon <see cref="TournamentPlayer.Score"/> and various tiebreaks.
+        /// </summary>
+        /// <returns>A list of active <see cref="TournamentPlayer"/> sorted according to the tournament's <see cref="Type"/>.</returns>
         public List<TournamentPlayer> GetLeaderboardActive()
         {
             return this.GetLeaderboard().Where(i => i.Active == true).ToList();
