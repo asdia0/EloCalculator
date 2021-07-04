@@ -66,13 +66,12 @@
         {
             List<(TournamentPlayer white, TournamentPlayer? black)> res = new List<(TournamentPlayer, TournamentPlayer?)>();
             List<TournamentPlayer> rankings = this.GetLeaderboardActive();
+            List<TournamentPlayer> rating = this.Players.OrderByDescending(i => i.Player.Rating).ThenBy(i => i.Player.Name).ToList();
 
             // TODO
             switch (this.Type)
             {
                 case TournamentType.Arena:
-                    List<TournamentPlayer> rating = this.Players.OrderBy(i => i.Player.Rating).ToList();
-
                     for (int i = 0; i < rating.Count; i += 2)
                     {
                         if (i == rating.Count - 1)
@@ -81,7 +80,17 @@
                             continue;
                         }
 
-                        res.Add((rating[i], rating[i + 1]));
+                        TournamentPlayer higher = rating[i];
+                        TournamentPlayer lower = rating[i + 1];
+
+                        if (higher.Colours.Black > higher.Colours.White)
+                        {
+                            res.Add((lower, higher));
+                        }
+                        else
+                        {
+                            res.Add((higher, lower));
+                        }
                     }
 
                     return res;
@@ -91,7 +100,7 @@
 
                     if (this.Rounds.Count == 0)
                     {
-                        danishAvail = this.Players.OrderBy(i => i.Player.Rating).ToList();
+                        danishAvail = rating;
                     }
                     else
                     {
@@ -117,9 +126,6 @@
                         {
                             res.Add((higher, lower));
                         }
-
-                        danishAvail.Remove(higher);
-                        danishAvail.Remove(lower);
                     }
 
                     return res;
@@ -129,7 +135,7 @@
 
                     if (this.Rounds.Count == 0)
                     {
-                        initial = this.Players.OrderBy(i => i.Player.Rating).ToList();
+                        initial = rating;
                     }
                     else
                     {
@@ -205,7 +211,7 @@
 
                     if (this.Rounds.Count == 0)
                     {
-                        monradAvail = this.Players.OrderBy(i => i.Player.Rating).ToList();
+                        monradAvail = rating;
                     }
                     else
                     {
@@ -334,6 +340,7 @@
                     return this.Players.
                         OrderByDescending(i => i.Score).
                         ThenByDescending(i => i.PerformanceRating).
+                        ThenBy(i => i.Player.Name).
                         ToList();
                 case TournamentType.Danish:
                 case TournamentType.Dutch:
@@ -345,11 +352,13 @@
                         ThenByDescending(i => i.Culmulative).
                         ThenByDescending(i => i.Buchholz).
                         ThenByDescending(i => i.Baumbach).
+                        ThenBy(i => i.Player.Name).
                         ToList();
                 case TournamentType.RoundRobin:
                     return this.Players.
                         OrderByDescending(i => i.Score).
                         ThenByDescending(i => i.SonnebornBerger).
+                        ThenBy(i => i.Player.Name).
                         ToList();
                 default:
                     throw new EloCalculatorException("Unrecognised tournament type.");
