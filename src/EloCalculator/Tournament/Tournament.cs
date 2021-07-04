@@ -72,6 +72,14 @@
 
             set
             {
+                foreach (TournamentRound round in value)
+                {
+                    if (round.Tournament != this)
+                    {
+                        throw new EloCalculatorException("TournamentRound must be local.");
+                    }
+                }
+
                 this._Rounds = value;
             }
         }
