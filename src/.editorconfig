@@ -14,3 +14,6 @@ dotnet_diagnostic.SA1401.severity = none
 
 # SA1502: Element should not be on a single line
 dotnet_diagnostic.SA1502.severity = none
+
+# SA1000: Keywords should be spaced correctly
+dotnet_diagnostic.SA1000.severity = none
