@@ -13,7 +13,6 @@ An example program can be found [here](src/EloCalculator.Example/Program.cs).
   - [Sonneborn-Berger (Neustadl)](https://en.wikipedia.org/wiki/Sonneborn%E2%80%93Berger_score)
   - [Buchholz](https://en.wikipedia.org/wiki/Buchholz_system)
   - [Median Buchholz](https://en.wikipedia.org/wiki/Tie-breaking_in_Swiss-system_tournaments#Median_/_Buchholz_/_Solkoff)
-  - Buchholz Cut 1 (Buchholz but the lowest score is not considered)
   - [Culmulative](https://en.wikipedia.org/wiki/Tie-breaking_in_Swiss-system_tournaments#Cumulative)
   - [Baumbach](https://en.wikipedia.org/wiki/Tie-breaking_in_Swiss-system_tournaments#Most_wins_(Baumbach))
   - [Linear Performance Rating](https://en.wikipedia.org/wiki/Performance_rating_(chess)#Linear_performance_rating)
