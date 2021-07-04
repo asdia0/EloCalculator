@@ -46,6 +46,14 @@
 
             set
             {
+                foreach (TournamentPlayer player in value)
+                {
+                    if (player.Tournament != this)
+                    {
+                        throw new EloCalculatorException("TournamentPlayer must be local.");
+                    }
+                }
+
                 this._Players = value;
             }
         }
