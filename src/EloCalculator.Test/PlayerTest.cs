@@ -34,7 +34,7 @@
             Player player1 = new("Player 1");
             Player player2 = new("Player 2");
 
-            Game game = new(player1, player2, Result.White, DateTime.Now, true);
+            _ = new Game(player1, player2, Result.White, DateTime.Now, true);
 
             Assert.AreEqual(1020, player1.Rating);
 
@@ -67,7 +67,7 @@
             Player player1 = new("Player 1");
             Player player2 = new("Player 2");
 
-            Game game = new(player1, player2, Result.White, DateTime.Now, true);
+            _ = new Game(player1, player2, Result.White, DateTime.Now, true);
 
             List<int> games = new()
             {
@@ -86,7 +86,7 @@
             Player player1 = new("Player 1");
             Player player2 = new("Player 2");
 
-            Game game = new(player1, player2, Result.White, DateTime.Now, true);
+            _ = new Game(player1, player2, Result.White, DateTime.Now, true);
 
             Assert.AreEqual(1, player1.Wins);
 
@@ -100,7 +100,7 @@
             Player player1 = new("Player 1");
             Player player2 = new("Player 2");
 
-            Game game = new(player1, player2, Result.Draw, DateTime.Now, true);
+            _ = new Game(player1, player2, Result.Draw, DateTime.Now, true);
 
             Assert.AreEqual(1, player1.Draws);
 
@@ -114,7 +114,7 @@
             Player player1 = new("Player 1");
             Player player2 = new("Player 2");
 
-            Game game = new(player1, player2, Result.Black, DateTime.Now, true);
+            _ = new Game(player1, player2, Result.Black, DateTime.Now, true);
 
             Assert.AreEqual(1, player1.Losses);
 
