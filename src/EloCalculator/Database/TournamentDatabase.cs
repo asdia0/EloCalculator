@@ -37,6 +37,24 @@
         }
 
         /// <summary>
+        /// Loads a <see cref="Tournament"/> from a file as a JSON object.
+        /// </summary>
+        /// <param name="path">The path to the file to load from.</param>
+        public static void Load(string path, int id)
+        {
+            string text = File.ReadAllText(path);
+
+            Tournament tournament = JsonConvert.DeserializeObject<Tournament>(text);
+
+            if (Tournaments.Where(i => i.ID == tournament.ID).Any())
+            {
+                Tournaments.Remove(tournament);
+            }
+
+            Tournaments.Add(tournament);
+        }
+
+        /// <summary>
         /// Exports <see cref="Tournaments"/> to a file as a JSON object.
         /// </summary>
         /// <param name="path">The path to the file to export to.</param>
