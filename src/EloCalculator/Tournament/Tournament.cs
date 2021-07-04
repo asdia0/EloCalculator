@@ -235,9 +235,6 @@
                         {
                             res.Add((lower, higher));
                         }
-
-                        monradAvail.Remove(higher);
-                        monradAvail.Remove(lower);
                     }
 
                     return res;
