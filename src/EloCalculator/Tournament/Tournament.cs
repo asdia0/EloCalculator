@@ -65,7 +65,7 @@
         public List<(TournamentPlayer White, TournamentPlayer? Black)> GetPairings()
         {
             List<(TournamentPlayer white, TournamentPlayer? black)> res = new List<(TournamentPlayer, TournamentPlayer?)>();
-            List<TournamentPlayer> rankings = this.GetLeaderboard();
+            List<TournamentPlayer> rankings = this.GetLeaderboardActive();
 
             // TODO
             switch (this.Type)
@@ -354,6 +354,11 @@
                 default:
                     throw new EloCalculatorException("Unrecognised tournament type.");
             }
+        }
+
+        public List<TournamentPlayer> GetLeaderboardActive()
+        {
+            return this.GetLeaderboard().Where(i => i.Active == true).ToList();
         }
 
         /// <summary>

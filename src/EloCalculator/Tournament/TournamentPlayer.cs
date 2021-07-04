@@ -22,6 +22,11 @@
         public int ID { get; }
 
         /// <summary>
+        /// Gets or sets a value indicating whether the player should be paired in the next <see cref="TournamentRound"/>.
+        /// </summary>
+        public bool Active { get; set; }
+
+        /// <summary>
         /// Gets the player's <see cref="EloCalculator.Player"/>.
         /// </summary>
         [JsonIgnore]
@@ -473,6 +478,7 @@
             this.ID = tournament.Players.Count;
             this.Tournament = tournament;
             this.Player = player;
+            this.Active = true;
         }
 
         /// <summary>
