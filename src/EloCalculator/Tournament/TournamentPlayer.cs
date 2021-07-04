@@ -54,23 +54,7 @@
             {
                 List<Game> res = new List<Game>();
 
-                foreach (TournamentRound round in this.Tournament.Rounds)
-                {
-                    foreach (Game game in round.Games)
-                    {
-                        if (game.White == this.Player)
-                        {
-                            res.Add(game);
-                            continue;
-                        }
-
-                        if (game.Black == this.Player)
-                        {
-                            res.Add(game);
-                            continue;
-                        }
-                    }
-                }
+                this.Tournament.Rounds.ForEach(round => res.Union(round.Games.Where(game => game.White == this.Player || game.Black == this.Player)));
 
                 return res;
             }
