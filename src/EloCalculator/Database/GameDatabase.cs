@@ -13,7 +13,21 @@
         /// <summary>
         /// A list of all games loaded.
         /// </summary>
-        public static List<Game> Games = new List<Game>();
+        public static List<Game> _Games = new List<Game>();
+
+        public static List<Game> Games
+        {
+            get
+            {
+                _Games = _Games.OrderBy(i => i.ID).ToList();
+                return _Games;
+            }
+
+            set
+            {
+                _Games = value;
+            }
+        }
 
         /// <summary>
         /// Clear <see cref="Games"/> and load <see cref="Game"/>s from a file as a JSON object.

@@ -24,7 +24,21 @@
         /// <summary>
         /// A list of all players loaded.
         /// </summary>
-        public static List<Player> Players = new List<Player>();
+        public static List<Player> _Players = new List<Player>();
+
+        public static List<Player> Players
+        {
+            get
+            {
+                _Players = _Players.OrderBy(i => i.ID).ToList();
+                return _Players;
+            }
+
+            set
+            {
+                _Players = value;
+            }
+        }
 
         /// <summary>
         /// Load <see cref="Player"/>s from a file as a JSON object.

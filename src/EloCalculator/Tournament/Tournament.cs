@@ -10,6 +10,10 @@
     /// </summary>
     public class Tournament
     {
+        private List<TournamentPlayer> _Players = new();
+
+        private List<TournamentRound> _Rounds = new();
+
         /// <summary>
         /// Gets the tournament's unique identification number.
         /// </summary>
@@ -32,13 +36,37 @@
         /// Gets a list of <see cref="TournamentPlayer"/>s participating in the tournament.
         /// </summary>
         [JsonProperty("Players")]
-        public List<TournamentPlayer> Players { get; }
+        public List<TournamentPlayer> Players
+        {
+            get
+            {
+                this._Players = this._Players.OrderBy(i => i.ID).ToList();
+                return this._Players;
+            }
+
+            set
+            {
+                this._Players = value;
+            }
+        }
 
         /// <summary>
         /// Gets a list of <see cref="TournamentRound"/>s being held during the tournament.
         /// </summary>
         [JsonProperty("Rounds")]
-        public List<TournamentRound> Rounds { get; }
+        public List<TournamentRound> Rounds
+        {
+            get
+            {
+                this._Rounds = this._Rounds.OrderBy(i => i.ID).ToList();
+                return this._Rounds;
+            }
+
+            set
+            {
+                this._Rounds = value;
+            }
+        }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Tournament"/> class.
@@ -52,8 +80,6 @@
             this.ID = TournamentDatabase.Tournaments.Any() ? TournamentDatabase.Tournaments.Last().ID + 1 : 0;
             this.Name = name;
             this.Type = type;
-            this.Players = new List<TournamentPlayer>();
-            this.Rounds = new List<TournamentRound>();
 
             TournamentDatabase.Tournaments.Add(this);
         }
@@ -444,7 +470,8 @@
         /// </summary>
         public void AddRound()
         {
-            this.Rounds.Add(new(this));
+            TournamentRound round = new(this);
+            this.Rounds.Add(round);
         }
 
         /// <summary>

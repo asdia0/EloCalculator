@@ -11,9 +11,23 @@
     public class TournamentDatabase
     {
         /// <summary>
-        /// A list of all tournaments loaded.
+        /// The value of <see cref="Tournaments"/>.
         /// </summary>
-        public static List<Tournament> Tournaments = new List<Tournament>();
+        public static List<Tournament> _Tournaments = new List<Tournament>();
+
+        public static List<Tournament> Tournaments
+        {
+            get
+            {
+                _Tournaments = _Tournaments.OrderBy(i => i.ID).ToList();
+                return _Tournaments;
+            }
+
+            set
+            {
+                _Tournaments = value;
+            }
+        }
 
         /// <summary>
         /// Loads <see cref="Tournament"/>s from a file as a JSON object.
