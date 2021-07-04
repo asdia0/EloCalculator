@@ -16,7 +16,7 @@
         public static List<Tournament> Tournaments = new List<Tournament>();
 
         /// <summary>
-        /// Loads a <see cref="Tournament"/>s from a file as a JSON object.
+        /// Loads <see cref="Tournament"/>s from a file as a JSON object.
         /// </summary>
         /// <param name="path">The path to the file to load from.</param>
         public static void Load(string path)
