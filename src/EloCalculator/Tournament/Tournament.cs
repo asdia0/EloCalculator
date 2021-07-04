@@ -145,63 +145,47 @@
                     List<TournamentPlayer> top = new List<TournamentPlayer>();
                     List<TournamentPlayer> bottom = new List<TournamentPlayer>();
 
-                    if (initial.Count % 2 == 0)
+                    for (int i = 0; i < (int)Ceiling((double)initial.Count / 2); i++)
                     {
-                        for (int i = 0; i < initial.Count / 2; i++)
-                        {
-                            top.Add(initial[i]);
-                        }
-
-                        for (int i = initial.Count / 2; i < initial.Count; i++)
-                        {
-                            bottom.Add(initial[i]);
-                        }
+                        top.Add(initial[i]);
                     }
-                    else
-                    {
-                        for (int i = 0; i < Floor((double)initial.Count / 2); i++)
-                        {
-                            top.Add(initial[i]);
-                        }
 
-                        for (int i = (int)Floor((double)initial.Count) + 1; i < initial.Count; i++)
-                        {
-                            bottom.Add(initial[i]);
-                        }
+                    for (int i = (int)Ceiling((double)initial.Count / 2); i < initial.Count; i++)
+                    {
+                        bottom.Add(initial[i]);
                     }
 
                     while (top.Count != 0)
                     {
-                        TournamentPlayer target = top[0];
-
-                        Dictionary<TournamentPlayer, int> timesPlayed = new Dictionary<TournamentPlayer, int>();
-
-                        foreach (TournamentPlayer player in bottom)
+                        if (top.Count == 1)
                         {
-                            timesPlayed.Add(player, target.Games.Where(i => i.White == player.Player || i.Black == player.Player).ToList().Count);
+                            res.Add((top[0], null));
+                            return res;
                         }
 
-                        TournamentPlayer partner = null;
+                        TournamentPlayer higher = top[0];
 
-                        foreach (TournamentPlayer player in bottom)
+                        Dictionary<TournamentPlayer, int> timesPlayed = new();
+
+                        foreach (TournamentPlayer bottomPlayer in bottom)
                         {
-                            if (timesPlayed[player] == timesPlayed.Aggregate((l, r) => l.Value < r.Value ? l : r).Value)
-                            {
-                                partner = player;
-                            }
+                            timesPlayed.Add(bottomPlayer, higher.Games.Where(i => i.White == bottomPlayer.Player || i.Black == bottomPlayer.Player).ToList().Count);
                         }
 
-                        if (target.Colours.Black > target.Colours.White)
+                        TournamentPlayer lower = timesPlayed.Aggregate((l, r) => l.Value < r.Value ? l : r).Key;
+
+
+                        if (higher.Colours.Black > higher.Colours.White)
                         {
-                            res.Add((target, partner));
+                            res.Add((higher, lower));
                         }
                         else
                         {
-                            res.Add((partner, target));
+                            res.Add((lower, higher));
                         }
 
-                        top.Remove(target);
-                        bottom.Remove(partner);
+                        top.Remove(higher);
+                        bottom.Remove(lower);
                     }
 
                     return res;
