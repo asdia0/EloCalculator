@@ -410,7 +410,6 @@
             this.Rounds.Add(round);
         }
 
-
         /// <summary>
         /// Adds a list of <see cref="TournamentRound"/>s to <see cref="Rounds"/>.
         /// </summary>
