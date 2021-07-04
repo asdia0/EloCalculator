@@ -1,10 +1,10 @@
 ﻿namespace EloCalculator.Test
 {
     using System;
-    using System.Linq;
     using System.Collections.Generic;
-    using Microsoft.VisualStudio.TestTools.UnitTesting;
+    using System.Linq;
     using EloCalculator;
+    using Microsoft.VisualStudio.TestTools.UnitTesting;
 
     [TestClass]
     public class TournamentRoundTest

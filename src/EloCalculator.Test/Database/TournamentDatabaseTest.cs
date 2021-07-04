@@ -1,9 +1,8 @@
 ﻿namespace EloCalculator.Test
 {
-    using System;
     using System.Collections.Generic;
-    using Microsoft.VisualStudio.TestTools.UnitTesting;
     using EloCalculator;
+    using Microsoft.VisualStudio.TestTools.UnitTesting;
 
     [TestClass]
     public class TournamentDatabaseTest
