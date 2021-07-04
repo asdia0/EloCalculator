@@ -366,6 +366,37 @@
         }
 
         /// <summary>
+        /// Adds a <see cref="TournamentPlayer"/> to <see cref="Players"/>.
+        /// </summary>
+        /// <param name="player">The <see cref="TournamentPlayer"/> to add.</param>
+        public void AddPlayer(TournamentPlayer player)
+        {
+            if (this.Players.Contains(player) || player.Tournament != this)
+            {
+                return;
+            }
+
+            this.Players.Add(player);
+        }
+
+        /// <summary>
+        /// Adds a list of players to <see cref="Players"/>.
+        /// </summary>
+        /// <param name="players">The list of <see cref="TournamentPlayer"/>s to add.</param>
+        public void AddPlayers(List<TournamentPlayer> players)
+        {
+            foreach (TournamentPlayer player in players)
+            {
+                if (this.Players.Contains(player) || player.Tournament != this)
+                {
+                    continue;
+                }
+
+                this.Players.Add(player);
+            }
+        }
+
+        /// <summary>
         /// Gets a JSON string representing the game.
         /// </summary>
         /// <returns>A JSON string that represents the game.</returns>

@@ -21,20 +21,13 @@
 
             t.Rounds[0].AddGame(g);
 
-            //File.WriteAllText("game.json", GameDatabase.Export());
-            //File.WriteAllText("player.json", PlayerDatabase.Export());
-            //File.WriteAllText("tournament.json", TournamentDatabase.Export(0));
+            GameDatabase.Export("game.json");
+            PlayerDatabase.Export("player.json");
 
-            foreach ((TournamentPlayer white, TournamentPlayer? black) in t.GetPairings())
-            {
-                if (black == null)
-                {
-                    Console.WriteLine((white.Player.Name, "BYE"));
-                    continue;
-                }
+            PlayerDatabase.Load("player.json");
+            GameDatabase.Load("game.json");
 
-                Console.WriteLine((white.Player.Name, black.Player.Name));
-            }
+            Console.WriteLine(GameDatabase.Games[0].White.Rating);
         }
     }
 }
