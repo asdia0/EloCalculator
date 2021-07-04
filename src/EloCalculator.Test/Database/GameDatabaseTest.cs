@@ -39,6 +39,7 @@
 
             Game expected = new(PlayerDatabase.Players[0], PlayerDatabase.Players[1], Result.White, DateTime.Now, true);
 
+            Assert.AreEqual(0, actual.ID);
             Assert.AreEqual(expected.White, actual.White);
             Assert.AreEqual(expected.WhiteID, actual.WhiteID);
             Assert.AreEqual(expected.Black, actual.Black);
