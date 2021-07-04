@@ -4,6 +4,8 @@ EloCalculator is a program designed to automate chess rating and tournament calc
 
 An example program can be found [here](src/EloCalculator.Example/Program.cs).
 
+The NuGet package can be found [here](https://www.nuget.org/packages/EloCalculator/).
+
 
 ## Features
 
