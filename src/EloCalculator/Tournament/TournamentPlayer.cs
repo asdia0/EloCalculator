@@ -301,50 +301,6 @@
         }
 
         /// <summary>
-        /// Gets the player's Buchholz Cut 1 score (<see cref="Buchholz"/> but the lowest opponent score is disregarded).
-        /// </summary>
-        [JsonProperty]
-        public float BuchholzCut1
-        {
-            get
-            {
-                if (this.Games.Count <= 1)
-                {
-                    return 0;
-                }
-
-                List<float> scores = new List<float>();
-
-                foreach (Game game in this.Games)
-                {
-                    if (game.White == this.Player)
-                    {
-                        if (game.Result == Result.Draw || game.Result == Result.White)
-                        {
-                            scores.Add(this.Tournament.Players.Where(i => i.Player == game.Black).FirstOrDefault().Score);
-                            continue;
-                        }
-                    }
-
-                    if (game.Black == this.Player)
-                    {
-                        if (game.Result == Result.Draw || game.Result == Result.Black)
-                        {
-                            scores.Add(this.Tournament.Players.Where(i => i.Player == game.Black).FirstOrDefault().Score);
-                            continue;
-                        }
-                    }
-                }
-
-                scores.Sort();
-
-                scores.RemoveAt(0);
-
-                return scores.Sum();
-            }
-        }
-
-        /// <summary>
         /// Gets the player's <see href="https://en.wikipedia.org/wiki/Tie-breaking_in_Swiss-system_tournaments#Cumulative">culmulative score</see>.
         /// </summary>
         [JsonProperty]
