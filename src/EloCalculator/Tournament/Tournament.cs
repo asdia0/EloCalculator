@@ -442,6 +442,14 @@
         /// <summary>
         /// Adds a <see cref="TournamentRound"/> to <see cref="Rounds"/>.
         /// </summary>
+        public void AddRound()
+        {
+            this.Rounds.Add(new(this));
+        }
+
+        /// <summary>
+        /// Adds a <see cref="TournamentRound"/> to <see cref="Rounds"/>.
+        /// </summary>
         /// <param name="round">The <see cref="TournamentRound"/> to add.</param>
         public void AddRound(TournamentRound round)
         {
