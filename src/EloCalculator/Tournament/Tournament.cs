@@ -159,11 +159,19 @@
                     {
                         if (top.Count == 1)
                         {
-                            res.Add((top[0], null));
+                            if (bottom.Count == 1)
+                            {
+                                res.Add((top[0], bottom[0]));
+                            }
+                            else
+                            {
+                                res.Add((top[0], null));
+                            }
                             return res;
                         }
 
                         TournamentPlayer higher = top[0];
+                        TournamentPlayer lower = null;
 
                         Dictionary<TournamentPlayer, int> timesPlayed = new();
 
@@ -172,7 +180,16 @@
                             timesPlayed.Add(bottomPlayer, higher.Games.Where(i => i.White == bottomPlayer.Player || i.Black == bottomPlayer.Player).ToList().Count);
                         }
 
-                        TournamentPlayer lower = timesPlayed.Aggregate((l, r) => l.Value < r.Value ? l : r).Key;
+                        int lowest = timesPlayed.Aggregate((l, r) => l.Value < r.Value ? l : r).Value;
+
+                        foreach (TournamentPlayer bottomPlayer in bottom)
+                        {
+                            if (timesPlayed[bottomPlayer] == lowest)
+                            {
+                                lower = bottomPlayer;
+                                break;
+                            }
+                        }
 
 
                         if (higher.Colours.Black > higher.Colours.White)
