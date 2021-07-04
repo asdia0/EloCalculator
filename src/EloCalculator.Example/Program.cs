@@ -15,55 +15,54 @@
         static void Main()
         {
             // Create players.
-            Player player1 = new("Player 1");
-            Player player2 = new("Player 2");
-            Player player3 = new("Player 3");
-            Player player4 = new("Player 4");
+            Player jambon = new("Jambon");
+            Player dropLt = new("DropLt");
+            Player jacob = new("Jacob");
 
             // Create games.
-            // Game 1 and 3 are rated; they will affect the players' ratings.
+            // Game 1 is rated; it will affect the players' ratings.
             // Game 2 is unrated; it will not affect the player's ratings.
-            Game game1 = new(player1, player2, Result.White, DateTime.Now, true);
-            Game game2 = new(player1, player3, Result.Draw, DateTime.Now, false);
-            Game game3 = new(player1, player4, Result.Black, DateTime.Now, true);
+            Game game1 = new(jambon, dropLt, Result.White, DateTime.Now, true);
+            Game game2 = new(jambon, jacob, Result.Draw, DateTime.Now, false);
 
             // Print current standings.
             //
             // Prints:
-            // (Player 4, 1021.1500225556907)
-            // (Player 3, 1000)
-            // (Player 1, 998.8499774443093)
-            // (Player 2, 980)
+            // (Jambon, 1020)
+            // (Jacob, 1000)
+            // (DropLt, 980)
+            Console.WriteLine("Global leaderboard:");
             foreach (Player player in PlayerDatabase.GetLeaderboard())
             {
                 Console.WriteLine((player.Name, player.Rating));
             }
 
             // Create a Swiss tournament (Danish variation).
-            Tournament danishTournament = new("Tournament 1", TournamentType.Danish);
+            Tournament spookBoomer = new("SpookBoomer", TournamentType.Danish);
 
             // Create a round in the tournament.
-            TournamentRound firstRound = new(danishTournament);
+            TournamentRound firstRound = new(spookBoomer);
 
             // Add the round to the tournament.
-            danishTournament.AddRound(firstRound);
+            spookBoomer.AddRound(firstRound);
 
             // Add games that were played during that round.
             firstRound.AddGames(new()
             {
                 game1,
-                game3,
+                game2,
             });
 
             // Print current tournament standings.
             //
             // Prints:
-            // (Player 4, 1, 1)
-            // (Player 1, 1, 0)
-            // (Player 2, 0, 0)
-            foreach (TournamentPlayer danishPlayer in danishTournament.GetLeaderboard())
+            // (Jambon, 1.5)
+            // (Jacob, 0.5)
+            // (DropLt, 0)
+            Console.WriteLine($"{spookBoomer.Name} leaderboard:");
+            foreach (TournamentPlayer boomer in spookBoomer.GetLeaderboard())
             {
-                Console.WriteLine((danishPlayer.Player.Name, danishPlayer.Score, danishPlayer.Buchholz));
+                Console.WriteLine((boomer.Player.Name, boomer.Score));
             }
         }
     }
