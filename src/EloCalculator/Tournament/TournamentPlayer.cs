@@ -52,7 +52,7 @@
         {
             get
             {
-                List<Game> res = new List<Game>();
+                List<Game> res = new();
 
                 foreach (TournamentRound round in this.Tournament.Rounds)
                 {
@@ -258,7 +258,7 @@
         {
             get
             {
-                List<float> scores = new List<float>();
+                List<float> scores = new();
 
                 foreach (Game game in this.Games)
                 {
@@ -302,7 +302,7 @@
         {
             get
             {
-                List<float> scores = new List<float>
+                List<float> scores = new()
                 {
                     0,
                 };

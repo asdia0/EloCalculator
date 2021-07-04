@@ -33,7 +33,7 @@
         public TournamentType Type { get; }
 
         /// <summary>
-        /// Gets a list of <see cref="TournamentPlayer"/>s participating in the tournament.
+        /// Gets or sets list of <see cref="TournamentPlayer"/>s participating in the tournament.
         /// </summary>
         [JsonProperty("Players")]
         public List<TournamentPlayer> Players
@@ -59,7 +59,7 @@
         }
 
         /// <summary>
-        /// Gets a list of <see cref="TournamentRound"/>s being held during the tournament.
+        /// Gets or sets a list of <see cref="TournamentRound"/>s being held during the tournament.
         /// </summary>
         [JsonProperty("Rounds")]
         public List<TournamentRound> Rounds
@@ -106,7 +106,7 @@
         /// <returns>A list of <see cref="TournamentPlayer"/> tuples. The first item represents the <see cref="Player"/> playing white, the second item represents the <see cref="Player"/> playing black.</returns>
         public List<(TournamentPlayer White, TournamentPlayer? Black)> GetPairings()
         {
-            List<(TournamentPlayer white, TournamentPlayer? black)> res = new List<(TournamentPlayer, TournamentPlayer?)>();
+            List<(TournamentPlayer white, TournamentPlayer? black)> res = new();
             List<TournamentPlayer> rankings = this.GetLeaderboardActive();
             List<TournamentPlayer> rating = this.Players.OrderByDescending(i => i.Player.Rating).ThenBy(i => i.Player.Name).ToList();
 
@@ -138,7 +138,7 @@
                     return res;
 
                 case TournamentType.Danish:
-                    List<TournamentPlayer> danishAvail = new List<TournamentPlayer>();
+                    List<TournamentPlayer> danishAvail = new();
 
                     if (this.Rounds.Count == 0)
                     {
@@ -173,7 +173,7 @@
                     return res;
 
                 case TournamentType.Dutch:
-                    List<TournamentPlayer> initial = new List<TournamentPlayer>();
+                    List<TournamentPlayer> initial = new();
 
                     if (this.Rounds.Count == 0)
                     {
@@ -184,8 +184,8 @@
                         initial = rankings;
                     }
 
-                    List<TournamentPlayer> top = new List<TournamentPlayer>();
-                    List<TournamentPlayer> bottom = new List<TournamentPlayer>();
+                    List<TournamentPlayer> top = new();
+                    List<TournamentPlayer> bottom = new();
 
                     for (int i = 0; i < Ceiling((double)initial.Count / 2); i++)
                     {
@@ -209,6 +209,7 @@
                             {
                                 res.Add((top[0], null));
                             }
+
                             return res;
                         }
 
@@ -233,7 +234,6 @@
                             }
                         }
 
-
                         if (higher.Colours.Black > higher.Colours.White)
                         {
                             res.Add((higher, lower));
@@ -250,7 +250,7 @@
                     return res;
 
                 case TournamentType.Monrad:
-                    List<TournamentPlayer> monradAvail = new List<TournamentPlayer>();
+                    List<TournamentPlayer> monradAvail = new();
 
                     if (this.Rounds.Count == 0)
                     {
@@ -410,35 +410,29 @@
         /// <returns>A list of <see cref="TournamentPlayer"/> sorted according to the tournament's <see cref="Type"/>.</returns>
         public List<TournamentPlayer> GetLeaderboard()
         {
-            switch (this.Type)
+            return this.Type switch
             {
-                case TournamentType.Arena:
-                    return this.Players.
-                        OrderByDescending(i => i.Score).
-                        ThenByDescending(i => i.PerformanceRating).
-                        ThenBy(i => i.Player.Name).
-                        ToList();
-                case TournamentType.Danish:
-                case TournamentType.Dutch:
-                case TournamentType.Monrad:
-                    return this.Players.
-                        OrderByDescending(i => i.Score).
-                        ThenByDescending(i => i.SonnebornBerger).
-                        ThenByDescending(i => i.MedianBuchholz).
-                        ThenByDescending(i => i.Culmulative).
-                        ThenByDescending(i => i.Buchholz).
-                        ThenByDescending(i => i.Baumbach).
-                        ThenBy(i => i.Player.Name).
-                        ToList();
-                case TournamentType.RoundRobin:
-                    return this.Players.
-                        OrderByDescending(i => i.Score).
-                        ThenByDescending(i => i.SonnebornBerger).
-                        ThenBy(i => i.Player.Name).
-                        ToList();
-                default:
-                    throw new EloCalculatorException("Unrecognised tournament type.");
-            }
+                TournamentType.Arena => this.Players.
+                    OrderByDescending(i => i.Score).
+                    ThenByDescending(i => i.PerformanceRating).
+                    ThenBy(i => i.Player.Name).
+                    ToList(),
+                TournamentType.Danish or TournamentType.Dutch or TournamentType.Monrad => this.Players.
+                    OrderByDescending(i => i.Score).
+                    ThenByDescending(i => i.SonnebornBerger).
+                    ThenByDescending(i => i.MedianBuchholz).
+                    ThenByDescending(i => i.Culmulative).
+                    ThenByDescending(i => i.Buchholz).
+                    ThenByDescending(i => i.Baumbach).
+                    ThenBy(i => i.Player.Name).
+                    ToList(),
+                TournamentType.RoundRobin => this.Players.
+                   OrderByDescending(i => i.Score).
+                   ThenByDescending(i => i.SonnebornBerger).
+                   ThenBy(i => i.Player.Name).
+                   ToList(),
+                _ => throw new EloCalculatorException("Unrecognised tournament type."),
+            };
         }
 
         /// <summary>

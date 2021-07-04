@@ -10,11 +10,11 @@
     /// </summary>
     public class TournamentDatabase
     {
-        /// <summary>
-        /// The value of <see cref="Tournaments"/>.
-        /// </summary>
-        public static List<Tournament> _Tournaments = new List<Tournament>();
+        private static List<Tournament> _Tournaments = new();
 
+        /// <summary>
+        /// Gets or sets a list of <see cref="Tournament"/>s loaded.
+        /// </summary>
         public static List<Tournament> Tournaments
         {
             get

@@ -53,7 +53,7 @@
         {
             get
             {
-                return this.PairingBye == null ? null : this.PairingBye.ID;
+                return this.PairingBye?.ID;
             }
         }
 

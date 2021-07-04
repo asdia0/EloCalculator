@@ -10,11 +10,11 @@
     /// </summary>
     public static class GameDatabase
     {
-        /// <summary>
-        /// A list of all games loaded.
-        /// </summary>
-        public static List<Game> _Games = new List<Game>();
+        private static List<Game> _Games = new();
 
+        /// <summary>
+        /// Gets or sets a list of all <see cref="Game"/>s loaded.
+        /// </summary>
         public static List<Game> Games
         {
             get

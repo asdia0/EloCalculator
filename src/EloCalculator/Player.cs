@@ -109,7 +109,7 @@
         {
             return JsonConvert.SerializeObject(this);
         }
-        
+
         public static implicit operator Player(long id)
         {
             return PlayerDatabase.Players[Convert.ToInt32(id)];
