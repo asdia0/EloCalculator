@@ -468,7 +468,7 @@
                 tplayer3,
             });
 
-            tournament.AddRound(new(tournament));
+            tournament.AddRound();
 
             tournament.Rounds[0].AddGame(new(player1, player2, Result.Black, DateTime.Now, true));
 
@@ -508,7 +508,7 @@
                 tplayer4,
             });
 
-            tournament.AddRound(new(tournament));
+            tournament.AddRound();
 
             tournament.Rounds[0].AddGames(new()
             {
@@ -622,7 +622,7 @@
                 tplayer3,
             });
 
-            tournament.AddRound(new(tournament));
+            tournament.AddRound();
 
             tournament.Rounds[0].AddGame(new(player1, player2, Result.Black, DateTime.Now, true));
 
@@ -662,7 +662,7 @@
                 tplayer4,
             });
 
-            tournament.AddRound(new(tournament));
+            tournament.AddRound();
 
             tournament.Rounds[0].AddGames(new()
             {
@@ -776,7 +776,7 @@
                 tplayer3,
             });
 
-            tournament.AddRound(new(tournament));
+            tournament.AddRound();
 
             tournament.Rounds[0].AddGame(new(player1, player2, Result.Black, DateTime.Now, true));
 
@@ -816,7 +816,7 @@
                 tplayer4,
             });
 
-            tournament.AddRound(new(tournament));
+            tournament.AddRound();
 
             tournament.Rounds[0].AddGames(new()
             {
@@ -857,8 +857,8 @@
                 tplayer3,
             });
 
-            tournament.AddRound(new(tournament));
-            tournament.AddRound(new(tournament));
+            tournament.AddRound();
+            tournament.AddRound();
 
             List<(TournamentPlayer, TournamentPlayer?)> expected = new()
             {
@@ -896,8 +896,8 @@
                 tplayer4,
             });
 
-            tournament.AddRound(new(tournament));
-            tournament.AddRound(new(tournament));
+            tournament.AddRound();
+            tournament.AddRound();
 
             List<(TournamentPlayer, TournamentPlayer?)> expected = new()
             {
