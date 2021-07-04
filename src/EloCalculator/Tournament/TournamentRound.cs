@@ -80,20 +80,12 @@
         /// </summary>
         /// <param name="tournament">The <see cref="EloCalculator.Tournament"/> that round is a part of.</param>
         /// <param name="games">A list of <see cref="Game"/>s played during this round.</param>
-        public TournamentRound(Tournament tournament, List<Game> games = null)
+        public TournamentRound(Tournament tournament)
         {
             this.ID = tournament.Rounds.Count;
             this.Tournament = tournament;
-            this.RequestedByes = new HashSet<TournamentPlayer>();
-
-            if (games == null)
-            {
-                this.Games = new HashSet<Game>();
-            }
-            else
-            {
-                this.AddGames(games);
-            }
+            this.RequestedByes = new();
+            this.Games = new();
         }
 
         /// <summary>
