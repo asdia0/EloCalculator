@@ -54,7 +54,23 @@
             {
                 List<Game> res = new List<Game>();
 
-                this.Tournament.Rounds.ForEach(round => res.Union(round.Games.Where(game => game.White == this.Player || game.Black == this.Player)));
+                foreach (TournamentRound round in this.Tournament.Rounds)
+                {
+                    foreach (Game game in round.Games)
+                    {
+                        if (game.White == this.Player)
+                        {
+                            res.Add(game);
+                            continue;
+                        }
+
+                        if (game.Black == this.Player)
+                        {
+                            res.Add(game);
+                            continue;
+                        }
+                    }
+                }
 
                 return res;
             }
@@ -385,7 +401,7 @@
         {
             get
             {
-                return (this.Games.Where(i => i.White == this.Player).ToList().Count, this.Games.Where(i => i.Black == this.Player).ToList().Count);
+                return (this.Games.Where(i => i.White == this.Player).Count(), this.Games.Where(i => i.Black == this.Player).Count());
             }
         }
 
