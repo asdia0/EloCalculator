@@ -19,7 +19,7 @@
         /// Loads a <see cref="Tournament"/>s from a file as a JSON object.
         /// </summary>
         /// <param name="path">The path to the file to load from.</param>
-        public static void LoadTournament(string path)
+        public static void Load(string path)
         {
             string text = File.ReadAllText(path);
 
