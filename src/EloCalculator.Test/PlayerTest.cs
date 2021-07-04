@@ -5,9 +5,15 @@
     using EloCalculator;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
 
+    /// <summary>
+    /// Tests <see cref="Player"/>.
+    /// </summary>
     [TestClass]
     public class PlayerTest
     {
+        /// <summary>
+        /// Tests <see cref="Player.ID"/>.
+        /// </summary>
         [TestMethod]
         public void PlayerID()
         {
@@ -18,6 +24,9 @@
             PlayerDatabase.Players.Clear();
         }
 
+        /// <summary>
+        /// Tests <see cref="Player.Name"/>.
+        /// </summary>
         [TestMethod]
         public void PlayerName()
         {
@@ -28,6 +37,9 @@
             PlayerDatabase.Players.Clear();
         }
 
+        /// <summary>
+        /// Tests <see cref="Player.Rating"/>.
+        /// </summary>
         [TestMethod]
         public void PlayerRating()
         {
@@ -42,6 +54,9 @@
             PlayerDatabase.Players.Clear();
         }
 
+        /// <summary>
+        /// Tests <see cref="Player.Games"/>.
+        /// </summary>
         [TestMethod]
         public void PlayerGames()
         {
@@ -61,6 +76,9 @@
             PlayerDatabase.Players.Clear();
         }
 
+        /// <summary>
+        /// Tests <see cref="Player.GamesID"/>.
+        /// </summary>
         [TestMethod]
         public void PlayerGamesID()
         {
@@ -80,6 +98,9 @@
             PlayerDatabase.Players.Clear();
         }
 
+        /// <summary>
+        /// Tests <see cref="Player.Wins"/>.
+        /// </summary>
         [TestMethod]
         public void PlayerWins()
         {
@@ -94,6 +115,9 @@
             PlayerDatabase.Players.Clear();
         }
 
+        /// <summary>
+        /// Tests <see cref="Player.Draws"/>.
+        /// </summary>
         [TestMethod]
         public void PlayerDraws()
         {
@@ -108,6 +132,9 @@
             PlayerDatabase.Players.Clear();
         }
 
+        /// <summary>
+        /// Tests <see cref="Player.Losses"/>.
+        /// </summary>
         [TestMethod]
         public void PlayerLosses()
         {

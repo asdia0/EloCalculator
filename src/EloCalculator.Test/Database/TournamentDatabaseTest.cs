@@ -4,9 +4,15 @@
     using EloCalculator;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
 
+    /// <summary>
+    /// Tests <see cref="TournamentDatabase"/>.
+    /// </summary>
     [TestClass]
     public class TournamentDatabaseTest
     {
+        /// <summary>
+        /// Tests <see cref="TournamentDatabase.Tournaments"/>.
+        /// </summary>
         [TestMethod]
         public void TournamentDatabaseTournaments()
         {
@@ -22,6 +28,9 @@
             TournamentDatabase.Tournaments.Clear();
         }
 
+        /// <summary>
+        /// Tests <see cref="TournamentDatabase.Load(string)"/> and <see cref="TournamentDatabase.Export(string)"/>.
+        /// </summary>
         [TestMethod]
         public void GameDatabaseLoadAndExport()
         {

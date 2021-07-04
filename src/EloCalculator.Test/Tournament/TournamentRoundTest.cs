@@ -6,9 +6,15 @@
     using EloCalculator;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
 
+    /// <summary>
+    /// Tests <see cref="TournamentRound"/>.
+    /// </summary>
     [TestClass]
     public class TournamentRoundTest
     {
+        /// <summary>
+        /// Tests <see cref="TournamentRound.Tournament"/>.
+        /// </summary>
         [TestMethod]
         public void TournamentRoundTournament()
         {
@@ -23,6 +29,9 @@
             TournamentDatabase.Tournaments.Clear();
         }
 
+        /// <summary>
+        /// Tests <see cref="TournamentRound.ID"/>.
+        /// </summary>
         [TestMethod]
         public void TournamentRoundID()
         {
@@ -37,6 +46,9 @@
             TournamentDatabase.Tournaments.Clear();
         }
 
+        /// <summary>
+        /// Tests <see cref="TournamentRound.Games"/>.
+        /// </summary>
         [TestMethod]
         public void TournamentRoundGames()
         {
@@ -51,6 +63,9 @@
             TournamentDatabase.Tournaments.Clear();
         }
 
+        /// <summary>
+        /// Tests <see cref="TournamentRound.GamesID"/>.
+        /// </summary>
         [TestMethod]
         public void TournamentRoundGamesID()
         {
@@ -65,6 +80,9 @@
             TournamentDatabase.Tournaments.Clear();
         }
 
+        /// <summary>
+        /// Tests <see cref="TournamentRound.PairingBye"/>.
+        /// </summary>
         [TestMethod]
         public void TournamentRoundPairingBye()
         {
@@ -84,6 +102,9 @@
             PlayerDatabase.Players.Clear();
         }
 
+        /// <summary>
+        /// Tests <see cref="TournamentRound.PairingByeID"/>.
+        /// </summary>
         [TestMethod]
         public void TournamentRoundPairingByeID()
         {
@@ -103,6 +124,9 @@
             PlayerDatabase.Players.Clear();
         }
 
+        /// <summary>
+        /// Tests <see cref="TournamentRound.RequestedByes"/>.
+        /// </summary>
         [TestMethod]
         public void TournamentRoundRequestedByes()
         {
@@ -122,6 +146,9 @@
             PlayerDatabase.Players.Clear();
         }
 
+        /// <summary>
+        /// Tests <see cref="TournamentRound.RequestedByesID"/>.
+        /// </summary>
         [TestMethod]
         public void TournamentRoundRequestedByesID()
         {
@@ -141,6 +168,9 @@
             PlayerDatabase.Players.Clear();
         }
 
+        /// <summary>
+        /// Tests <see cref="TournamentRound.AddGame(Game)"/>.
+        /// </summary>
         [TestMethod]
         public void TournamentRoundAddGame()
         {
@@ -165,6 +195,9 @@
             PlayerDatabase.Players.Clear();
         }
 
+        /// <summary>
+        /// Tests <see cref="TournamentRound.AddGames(List{Game})"/>.
+        /// </summary>
         [TestMethod]
         public void TournamentRoundAddGames()
         {

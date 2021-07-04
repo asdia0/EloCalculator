@@ -4,9 +4,15 @@ namespace EloCalculator.Test
     using EloCalculator;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
 
+    /// <summary>
+    /// Tests <see cref="Game"/>.
+    /// </summary>
     [TestClass]
     public class GameTest
     {
+        /// <summary>
+        /// Tests <see cref="Game.ID"/>.
+        /// </summary>
         [TestMethod]
         public void GameID()
         {
@@ -24,6 +30,9 @@ namespace EloCalculator.Test
             PlayerDatabase.Players.Clear();
         }
 
+        /// <summary>
+        /// Tests <see cref="Game.White"/>.
+        /// </summary>
         [TestMethod]
         public void GameWhite()
         {
@@ -41,6 +50,9 @@ namespace EloCalculator.Test
             PlayerDatabase.Players.Clear();
         }
 
+        /// <summary>
+        /// Tests <see cref="Game.WhiteID"/>.
+        /// </summary>
         [TestMethod]
         public void GameWhiteID()
         {
@@ -58,6 +70,9 @@ namespace EloCalculator.Test
             PlayerDatabase.Players.Clear();
         }
 
+        /// <summary>
+        /// Tests <see cref="Game.Black"/>.
+        /// </summary>
         [TestMethod]
         public void GameBlack()
         {
@@ -75,6 +90,9 @@ namespace EloCalculator.Test
             PlayerDatabase.Players.Clear();
         }
 
+        /// <summary>
+        /// Tests <see cref="Game.BlackID"/>.
+        /// </summary>
         [TestMethod]
         public void GameBlackID()
         {
@@ -92,6 +110,9 @@ namespace EloCalculator.Test
             PlayerDatabase.Players.Clear();
         }
 
+        /// <summary>
+        /// Tests <see cref="Game.Result"/>.
+        /// </summary>
         [TestMethod]
         public void GameResult()
         {
@@ -109,6 +130,9 @@ namespace EloCalculator.Test
             PlayerDatabase.Players.Clear();
         }
 
+        /// <summary>
+        /// Tests <see cref="Game.DateTime"/>.
+        /// </summary>
         [TestMethod]
         public void GameDateTime()
         {
@@ -126,6 +150,9 @@ namespace EloCalculator.Test
             PlayerDatabase.Players.Clear();
         }
 
+        /// <summary>
+        /// Tests <see cref="Game.Rated"/>.
+        /// </summary>
         [TestMethod]
         public void GameRated()
         {

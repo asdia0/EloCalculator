@@ -6,9 +6,15 @@
     using EloCalculator;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
 
+    /// <summary>
+    /// Tests <see cref="Tournament"/>.
+    /// </summary>
     [TestClass]
     public class TournamentTest
     {
+        /// <summary>
+        /// Tests <see cref="Tournament.ID"/>.
+        /// </summary>
         [TestMethod]
         public void TournamentID()
         {
@@ -19,6 +25,9 @@
             TournamentDatabase.Tournaments.Clear();
         }
 
+        /// <summary>
+        /// Tests <see cref="Tournament.Name"/>.
+        /// </summary>
         [TestMethod]
         public void TournamentName()
         {
@@ -29,6 +38,9 @@
             TournamentDatabase.Tournaments.Clear();
         }
 
+        /// <summary>
+        /// Tests <see cref="Tournament.Type"/>.
+        /// </summary>
         [TestMethod]
         public void TournamentTypeT()
         {
@@ -39,6 +51,9 @@
             TournamentDatabase.Tournaments.Clear();
         }
 
+        /// <summary>
+        /// Tests <see cref="Tournament.Players"/>.
+        /// </summary>
         [TestMethod]
         public void TournamentPlayers()
         {
@@ -51,6 +66,9 @@
             TournamentDatabase.Tournaments.Clear();
         }
 
+        /// <summary>
+        /// Tests <see cref="Tournament.Rounds"/>.
+        /// </summary>
         [TestMethod]
         public void TournamentRounds()
         {
@@ -63,6 +81,9 @@
             TournamentDatabase.Tournaments.Clear();
         }
 
+        /// <summary>
+        /// Tests <see cref="Tournament.AddPlayer(TournamentPlayer)"/>.
+        /// </summary>
         [TestMethod]
         public void TournamentAddPlayerLocal()
         {
@@ -83,6 +104,9 @@
             PlayerDatabase.Players.Clear();
         }
 
+        /// <summary>
+        /// Tests <see cref="Tournament.AddPlayer(TournamentPlayer)"/>.
+        /// </summary>
         [TestMethod]
         public void TournamentAddPlayerNonLocal()
         {
@@ -101,6 +125,9 @@
             PlayerDatabase.Players.Clear();
         }
 
+        /// <summary>
+        /// Tests <see cref="Tournament.Players"/>.
+        /// </summary>
         [TestMethod]
         public void TournamentAddPlayers()
         {
@@ -125,6 +152,9 @@
             PlayerDatabase.Players.Clear();
         }
 
+        /// <summary>
+        /// Tests <see cref="Tournament.AddRound"/>.
+        /// </summary>
         [TestMethod]
         public void TournamentAddRound()
         {
@@ -137,6 +167,9 @@
             TournamentDatabase.Tournaments.Clear();
         }
 
+        /// <summary>
+        /// Tests <see cref="Tournament.AddRound(TournamentRound)"/>.
+        /// </summary>
         [TestMethod]
         public void TournamentAddRoundLocal()
         {
@@ -156,6 +189,9 @@
             TournamentDatabase.Tournaments.Clear();
         }
 
+        /// <summary>
+        /// Tests <see cref="Tournament.AddRound(TournamentRound)"/>.
+        /// </summary>
         [TestMethod]
         public void TournamentAddRoundNonLocal()
         {
@@ -173,6 +209,9 @@
             TournamentDatabase.Tournaments.Clear();
         }
 
+        /// <summary>
+        /// Tests <see cref="Tournament.AddRounds(List{TournamentRound})"/>.
+        /// </summary>
         [TestMethod]
         public void TournamentAddRounds()
         {
@@ -196,6 +235,9 @@
             TournamentDatabase.Tournaments.Clear();
         }
 
+        /// <summary>
+        /// Tests <see cref="Tournament.GetLeaderboard"/>.
+        /// </summary>
         [TestMethod]
         public void TournamentGetLeaderboardArena()
         {
@@ -222,6 +264,9 @@
             PlayerDatabase.Players.Clear();
         }
 
+        /// <summary>
+        /// Tests <see cref="Tournament.GetLeaderboard"/>.
+        /// </summary>
         [TestMethod]
         public void TournamentGetLeaderboardSwiss()
         {
@@ -248,6 +293,9 @@
             PlayerDatabase.Players.Clear();
         }
 
+        /// <summary>
+        /// Tests <see cref="Tournament.GetLeaderboard"/>.
+        /// </summary>
         [TestMethod]
         public void TournamentGetLeaderboardRoundRobin()
         {
@@ -274,6 +322,9 @@
             PlayerDatabase.Players.Clear();
         }
 
+        /// <summary>
+        /// Tests <see cref="Tournament.GetLeaderboard"/>.
+        /// </summary>
         [TestMethod]
         public void TournamentGetLeaderboardActive()
         {
@@ -301,6 +352,9 @@
             PlayerDatabase.Players.Clear();
         }
 
+        /// <summary>
+        /// Tests <see cref="Tournament.GetPairings"/>.
+        /// </summary>
         [TestMethod]
         public void TournamentGetPairingsArenaOdd()
         {
@@ -336,6 +390,9 @@
             GameDatabase.Games.Clear();
         }
 
+        /// <summary>
+        /// Tests <see cref="Tournament.GetPairings"/>.
+        /// </summary>
         [TestMethod]
         public void TournamentGetPairingsArenaEven()
         {
@@ -374,6 +431,9 @@
             GameDatabase.Games.Clear();
         }
 
+        /// <summary>
+        /// Tests <see cref="Tournament.GetPairings"/>.
+        /// </summary>
         [TestMethod]
         public void TournamentGetPairingsDanishRound1Odd()
         {
@@ -409,6 +469,9 @@
             GameDatabase.Games.Clear();
         }
 
+        /// <summary>
+        /// Tests <see cref="Tournament.GetPairings"/>.
+        /// </summary>
         [TestMethod]
         public void TournamentGetPairingsDanishRound1Even()
         {
@@ -447,6 +510,9 @@
             GameDatabase.Games.Clear();
         }
 
+        /// <summary>
+        /// Tests <see cref="Tournament.GetPairings"/>.
+        /// </summary>
         [TestMethod]
         public void TournamentGetPairingsDanishRoundNOdd()
         {
@@ -484,6 +550,9 @@
             GameDatabase.Games.Clear();
         }
 
+        /// <summary>
+        /// Tests <see cref="Tournament.GetPairings"/>.
+        /// </summary>
         [TestMethod]
         public void TournamentGetPairingsDanishRoundNEven()
         {
@@ -528,6 +597,9 @@
             GameDatabase.Games.Clear();
         }
 
+        /// <summary>
+        /// Tests <see cref="Tournament.GetPairings"/>.
+        /// </summary>
         [TestMethod]
         public void TournamentGetPairingsDutchRound1Odd()
         {
@@ -563,6 +635,9 @@
             GameDatabase.Games.Clear();
         }
 
+        /// <summary>
+        /// Tests <see cref="Tournament.GetPairings"/>.
+        /// </summary>
         [TestMethod]
         public void TournamentGetPairingsDutchRound1Even()
         {
@@ -601,6 +676,9 @@
             GameDatabase.Games.Clear();
         }
 
+        /// <summary>
+        /// Tests <see cref="Tournament.GetPairings"/>.
+        /// </summary>
         [TestMethod]
         public void TournamentGetPairingsDutchRoundNOdd()
         {
@@ -638,6 +716,9 @@
             GameDatabase.Games.Clear();
         }
 
+        /// <summary>
+        /// Tests <see cref="Tournament.GetPairings"/>.
+        /// </summary>
         [TestMethod]
         public void TournamentGetPairingsDutchRoundNEven()
         {
@@ -682,6 +763,9 @@
             GameDatabase.Games.Clear();
         }
 
+        /// <summary>
+        /// Tests <see cref="Tournament.GetPairings"/>.
+        /// </summary>
         [TestMethod]
         public void TournamentGetPairingsMonradRound1Odd()
         {
@@ -717,6 +801,9 @@
             GameDatabase.Games.Clear();
         }
 
+        /// <summary>
+        /// Tests <see cref="Tournament.GetPairings"/>.
+        /// </summary>
         [TestMethod]
         public void TournamentGetPairingsMonradRound1Even()
         {
@@ -755,6 +842,9 @@
             GameDatabase.Games.Clear();
         }
 
+        /// <summary>
+        /// Tests <see cref="Tournament.GetPairings"/>.
+        /// </summary>
         [TestMethod]
         public void TournamentGetPairingsMonradRoundNOdd()
         {
@@ -792,6 +882,9 @@
             GameDatabase.Games.Clear();
         }
 
+        /// <summary>
+        /// Tests <see cref="Tournament.GetPairings"/>.
+        /// </summary>
         [TestMethod]
         public void TournamentGetPairingsMonradRoundNEven()
         {
@@ -836,6 +929,9 @@
             GameDatabase.Games.Clear();
         }
 
+        /// <summary>
+        /// Tests <see cref="Tournament.GetPairings"/>.
+        /// </summary>
         [TestMethod]
         public void TournamentGetPairingsRoundRobinRoundNOdd()
         {
@@ -872,6 +968,9 @@
             GameDatabase.Games.Clear();
         }
 
+        /// <summary>
+        /// Tests <see cref="Tournament.GetPairings"/>.
+        /// </summary>
         [TestMethod]
         public void TournamentGetPairingsRoundRobinRoundNEven()
         {

@@ -5,9 +5,15 @@
     using EloCalculator;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
 
+    /// <summary>
+    /// Tests <see cref="TournamentPlayer"/>.
+    /// </summary>
     [TestClass]
     public class TournamentPlayerTest
     {
+        /// <summary>
+        /// Tests <see cref="TournamentPlayer.ID"/>.
+        /// </summary>
         [TestMethod]
         public void TournamentPlayerID()
         {
@@ -23,6 +29,9 @@
             PlayerDatabase.Players.Clear();
         }
 
+        /// <summary>
+        /// Tests <see cref="TournamentPlayer.Active"/>.
+        /// </summary>
         [TestMethod]
         public void TournamentPlayerActiveTrue()
         {
@@ -38,6 +47,9 @@
             PlayerDatabase.Players.Clear();
         }
 
+        /// <summary>
+        /// Tests <see cref="TournamentPlayer.Active"/>.
+        /// </summary>
         [TestMethod]
         public void TournamentPlayerActiveFalse()
         {
@@ -55,6 +67,9 @@
             PlayerDatabase.Players.Clear();
         }
 
+        /// <summary>
+        /// Tests <see cref="TournamentPlayer.Player"/>.
+        /// </summary>
         [TestMethod]
         public void TournamentPlayerPlayer()
         {
@@ -70,6 +85,9 @@
             PlayerDatabase.Players.Clear();
         }
 
+        /// <summary>
+        /// Tests <see cref="TournamentPlayer.PlayerID"/>.
+        /// </summary>
         [TestMethod]
         public void TournamentPlayerPlayerID()
         {
@@ -85,6 +103,9 @@
             PlayerDatabase.Players.Clear();
         }
 
+        /// <summary>
+        /// Tests <see cref="TournamentPlayer.Games"/>.
+        /// </summary>
         [TestMethod]
         public void TournamentPlayerGames()
         {
@@ -100,6 +121,9 @@
             PlayerDatabase.Players.Clear();
         }
 
+        /// <summary>
+        /// Tests <see cref="TournamentPlayer.GamesID"/>.
+        /// </summary>
         [TestMethod]
         public void TournamentPlayerGamesID()
         {
@@ -115,6 +139,9 @@
             PlayerDatabase.Players.Clear();
         }
 
+        /// <summary>
+        /// Tests <see cref="TournamentPlayer.Score"/>.
+        /// </summary>
         [TestMethod]
         public void TournamentPlayerScore()
         {
@@ -143,6 +170,9 @@
             PlayerDatabase.Players.Clear();
         }
 
+        /// <summary>
+        /// Tests <see cref="TournamentPlayer.PerformanceRating"/>.
+        /// </summary>
         [TestMethod]
         public void TournamentPlayerPerformanceRating()
         {
@@ -171,6 +201,9 @@
             PlayerDatabase.Players.Clear();
         }
 
+        /// <summary>
+        /// Tests <see cref="TournamentPlayer.SonnebornBerger"/>.
+        /// </summary>
         [TestMethod]
         public void TournamentPlayerSonnebornBerger()
         {
@@ -199,6 +232,9 @@
             PlayerDatabase.Players.Clear();
         }
 
+        /// <summary>
+        /// Tests <see cref="TournamentPlayer.Buchholz"/>.
+        /// </summary>
         [TestMethod]
         public void TournamentPlayerBuchholz()
         {
@@ -227,6 +263,9 @@
             PlayerDatabase.Players.Clear();
         }
 
+        /// <summary>
+        /// Tests <see cref="TournamentPlayer.MedianBuchholz"/>.
+        /// </summary>
         [TestMethod]
         public void TournamentPlayerMedianBuchholz()
         {
@@ -255,6 +294,9 @@
             PlayerDatabase.Players.Clear();
         }
 
+        /// <summary>
+        /// Tests <see cref="TournamentPlayer.Culmulative"/>.
+        /// </summary>
         [TestMethod]
         public void TournamentPlayerCulmulative()
         {
@@ -283,6 +325,9 @@
             PlayerDatabase.Players.Clear();
         }
 
+        /// <summary>
+        /// Tests <see cref="TournamentPlayer.Baumbach"/>.
+        /// </summary>
         [TestMethod]
         public void TournamentPlayerBaumbach()
         {
@@ -311,6 +356,9 @@
             PlayerDatabase.Players.Clear();
         }
 
+        /// <summary>
+        /// Tests <see cref="TournamentPlayer.Colours"/>.
+        /// </summary>
         [TestMethod]
         public void TournamentPlayerColours()
         {
@@ -339,6 +387,9 @@
             PlayerDatabase.Players.Clear();
         }
 
+        /// <summary>
+        /// Tests <see cref="TournamentPlayer.GetHeadToHeadScore(TournamentPlayer)"/>.
+        /// </summary>
         [TestMethod]
         public void TournamentPlayerGetHeadToHeadWin()
         {
@@ -365,6 +416,9 @@
             PlayerDatabase.Players.Clear();
         }
 
+        /// <summary>
+        /// Tests <see cref="TournamentPlayer.GetHeadToHeadScore(TournamentPlayer)"/>.
+        /// </summary>
         [TestMethod]
         public void TournamentPlayerGetHeadToHeadLose()
         {
@@ -391,6 +445,9 @@
             PlayerDatabase.Players.Clear();
         }
 
+        /// <summary>
+        /// Tests <see cref="TournamentPlayer.GetHeadToHeadScore(TournamentPlayer)"/>.
+        /// </summary>
         [TestMethod]
         public void TournamentPlayerGetHeadToHeadDraw()
         {

@@ -5,9 +5,15 @@
     using EloCalculator;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
 
+    /// <summary>
+    /// Tests <see cref="PlayerDatabase"/>.
+    /// </summary>
     [TestClass]
     public class PlayerDatabaseTest
     {
+        /// <summary>
+        /// Tests <see cref="PlayerDatabase.Players"/>.
+        /// </summary>
         [TestMethod]
         public void PlayerDatabasePlayers()
         {
@@ -23,6 +29,9 @@
             PlayerDatabase.Players.Clear();
         }
 
+        /// <summary>
+        /// Tests <see cref="PlayerDatabase.UpdateRatings(Game)"/>.
+        /// </summary>
         [TestMethod]
         public void PlayerDatabaseUpdateRatingsTrue()
         {
@@ -38,6 +47,9 @@
             GameDatabase.Games.Clear();
         }
 
+        /// <summary>
+        /// Test <see cref="PlayerDatabase.UpdateRatings(Game)"/>.
+        /// </summary>
         [TestMethod]
         public void PlayerDatabaseUpdateRatingsFalse()
         {
@@ -53,6 +65,9 @@
             GameDatabase.Games.Clear();
         }
 
+        /// <summary>
+        /// Tests <see cref="PlayerDatabase.Load(string)"/> and <see cref="PlayerDatabase.Export(string)"/>.
+        /// </summary>
         [TestMethod]
         public void PlayerDatabaseLoadAndExport()
         {
