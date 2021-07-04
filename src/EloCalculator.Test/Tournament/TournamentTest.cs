@@ -230,7 +230,6 @@
             Player player1 = new("Player 1");
             Player player2 = new("Player 2");
 
-
             tournament.AddPlayers(new()
             {
                 new(tournament, player1),
