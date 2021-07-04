@@ -472,7 +472,7 @@
 
             tournament.Rounds[0].AddGame(new(player1, player2, Result.Black, DateTime.Now, true));
 
-            List <(TournamentPlayer, TournamentPlayer?)> expected = new()
+            List<(TournamentPlayer, TournamentPlayer?)> expected = new()
             {
                 (tplayer2, tplayer1),
                 (tplayer3, null),
