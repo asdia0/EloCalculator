@@ -16,13 +16,13 @@
         {
             // Create players.
             Player jambon = new("Jambon");
-            Player dropLt = new("DropLt");
+            Player droplt = new("Droplt");
             Player jacob = new("Jacob");
 
             // Create games.
             // Game 1 is rated; it will affect the players' ratings.
             // Game 2 is unrated; it will not affect the player's ratings.
-            Game game1 = new(jambon, dropLt, Result.White, DateTime.Now, true);
+            Game game1 = new(jambon, droplt, Result.White, DateTime.Now, true);
             Game game2 = new(jambon, jacob, Result.Draw, DateTime.Now, false);
 
             // Print current standings.
@@ -30,7 +30,7 @@
             // Prints:
             // (Jambon, 1020)
             // (Jacob, 1000)
-            // (DropLt, 980)
+            // (Droplt, 980)
             Console.WriteLine("Global leaderboard:");
             foreach (Player player in PlayerDatabase.GetLeaderboard())
             {
@@ -58,7 +58,7 @@
             // Prints:
             // (Jambon, 1.5)
             // (Jacob, 0.5)
-            // (DropLt, 0)
+            // (Droplt, 0)
             Console.WriteLine($"{spookBoomer.Name} leaderboard:");
             foreach (TournamentPlayer boomer in spookBoomer.GetLeaderboard())
             {
