@@ -36,7 +36,7 @@
         {
             get
             {
-                return GameDatabase.Games.Where(game => game.White == this || game.Black == this).ToList();
+                return GameDatabase.Games.Where(game => game.WhitePlayer == this || game.BlackPlayer == this).ToList();
             }
         }
 
@@ -60,7 +60,7 @@
         {
             get
             {
-                return this.Games.Where(game => (game.White == this && game.Result == Result.White) || (game.Black == this && game.Result == Result.Black)).Count();
+                return this.Games.Where(game => (game.WhitePlayer == this && game.Result == Result.White) || (game.BlackPlayer == this && game.Result == Result.Black)).Count();
             }
         }
 
@@ -84,7 +84,7 @@
         {
             get
             {
-                return this.Games.Where(game => (game.White == this && game.Result == Result.Black) || (game.Black == this && game.Result == Result.White)).Count();
+                return this.Games.Where(game => (game.WhitePlayer == this && game.Result == Result.Black) || (game.BlackPlayer == this && game.Result == Result.White)).Count();
             }
         }
 

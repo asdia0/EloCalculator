@@ -220,7 +220,7 @@
 
                         foreach (TournamentPlayer bottomPlayer in bottom)
                         {
-                            timesPlayed.Add(bottomPlayer, higher.Games.Where(i => i.White == bottomPlayer.Player || i.Black == bottomPlayer.Player).ToList().Count);
+                            timesPlayed.Add(bottomPlayer, higher.Games.Where(i => i.WhitePlayer == bottomPlayer.Player || i.BlackPlayer == bottomPlayer.Player).ToList().Count);
                         }
 
                         int lowest = timesPlayed.Aggregate((l, r) => l.Value < r.Value ? l : r).Value;
@@ -281,7 +281,7 @@
                                 continue;
                             }
 
-                            timesPlayed.Add(player, higher.Games.Where(i => i.White == player.Player || i.Black == player.Player).ToList().Count);
+                            timesPlayed.Add(player, higher.Games.Where(i => i.WhitePlayer == player.Player || i.BlackPlayer == player.Player).ToList().Count);
                         }
 
                         int lowest = timesPlayed.Aggregate((l, r) => l.Value < r.Value ? l : r).Value;

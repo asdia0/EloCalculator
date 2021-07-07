@@ -58,13 +58,13 @@
                 {
                     foreach (Game game in round.Games)
                     {
-                        if (game.White == this.Player)
+                        if (game.WhitePlayer == this.Player)
                         {
                             res.Add(game);
                             continue;
                         }
 
-                        if (game.Black == this.Player)
+                        if (game.BlackPlayer == this.Player)
                         {
                             res.Add(game);
                             continue;
@@ -106,13 +106,13 @@
                         continue;
                     }
 
-                    if (game.White == this.Player && game.Result == Result.White)
+                    if (game.WhitePlayer == this.Player && game.Result == Result.White)
                     {
                         res += 1;
                         continue;
                     }
 
-                    if (game.Black == this.Player && game.Result == Result.Black)
+                    if (game.BlackPlayer == this.Player && game.Result == Result.Black)
                     {
                         res += 1;
                         continue;
@@ -149,15 +149,15 @@
 
                 foreach (Game game in this.Games)
                 {
-                    if (game.White == this.Player)
+                    if (game.WhitePlayer == this.Player)
                     {
-                        averageOpponent += game.Black.Rating;
+                        averageOpponent += game.BlackPlayer.Rating;
                         continue;
                     }
 
-                    if (game.Black == this.Player)
+                    if (game.BlackPlayer == this.Player)
                     {
-                        averageOpponent += game.White.Rating;
+                        averageOpponent += game.WhitePlayer.Rating;
                         continue;
                     }
                 }
@@ -180,32 +180,32 @@
 
                 foreach (Game game in this.Games)
                 {
-                    if (game.White == this.Player)
+                    if (game.WhitePlayer == this.Player)
                     {
                         if (game.Result == Result.Draw)
                         {
-                            res += this.Tournament.Players.Where(i => i.Player == game.Black).FirstOrDefault().Score / 2;
+                            res += this.Tournament.Players.Where(i => i.Player == game.BlackPlayer).FirstOrDefault().Score / 2;
                             continue;
                         }
 
                         if (game.Result == Result.White)
                         {
-                            res += this.Tournament.Players.Where(i => i.Player == game.Black).FirstOrDefault().Score;
+                            res += this.Tournament.Players.Where(i => i.Player == game.BlackPlayer).FirstOrDefault().Score;
                             continue;
                         }
                     }
 
-                    if (game.Black == this.Player)
+                    if (game.BlackPlayer == this.Player)
                     {
                         if (game.Result == Result.Draw)
                         {
-                            res += this.Tournament.Players.Where(i => i.Player == game.White).FirstOrDefault().Score / 2;
+                            res += this.Tournament.Players.Where(i => i.Player == game.WhitePlayer).FirstOrDefault().Score / 2;
                             continue;
                         }
 
                         if (game.Result == Result.Black)
                         {
-                            res += this.Tournament.Players.Where(i => i.Player == game.White).FirstOrDefault().Score;
+                            res += this.Tournament.Players.Where(i => i.Player == game.WhitePlayer).FirstOrDefault().Score;
                             continue;
                         }
                     }
@@ -227,20 +227,20 @@
 
                 foreach (Game game in this.Games)
                 {
-                    if (game.White == this.Player)
+                    if (game.WhitePlayer == this.Player)
                     {
                         if (game.Result == Result.Draw || game.Result == Result.White)
                         {
-                            res += this.Tournament.Players.Where(i => i.Player == game.Black).FirstOrDefault().Score;
+                            res += this.Tournament.Players.Where(i => i.Player == game.BlackPlayer).FirstOrDefault().Score;
                             continue;
                         }
                     }
 
-                    if (game.Black == this.Player)
+                    if (game.BlackPlayer == this.Player)
                     {
                         if (game.Result == Result.Draw || game.Result == Result.Black)
                         {
-                            res += this.Tournament.Players.Where(i => i.Player == game.White).FirstOrDefault().Score;
+                            res += this.Tournament.Players.Where(i => i.Player == game.WhitePlayer).FirstOrDefault().Score;
                             continue;
                         }
                     }
@@ -262,15 +262,15 @@
 
                 foreach (Game game in this.Games)
                 {
-                    if (game.White == this.Player)
+                    if (game.WhitePlayer == this.Player)
                     {
-                        scores.Add(this.Tournament.Players.Where(i => i.Player == game.Black).FirstOrDefault().Score);
+                        scores.Add(this.Tournament.Players.Where(i => i.Player == game.BlackPlayer).FirstOrDefault().Score);
                         continue;
                     }
 
-                    if (game.Black == this.Player)
+                    if (game.BlackPlayer == this.Player)
                     {
-                        scores.Add(this.Tournament.Players.Where(i => i.Player == game.Black).FirstOrDefault().Score);
+                        scores.Add(this.Tournament.Players.Where(i => i.Player == game.BlackPlayer).FirstOrDefault().Score);
                         continue;
                     }
                 }
@@ -313,7 +313,7 @@
 
                     foreach (Game game in round.Games)
                     {
-                        if (game.White == this.Player)
+                        if (game.WhitePlayer == this.Player)
                         {
                             if (game.Result == Result.Draw)
                             {
@@ -326,7 +326,7 @@
                             }
                         }
 
-                        if (game.Black == this.Player)
+                        if (game.BlackPlayer == this.Player)
                         {
                             if (game.Result == Result.Draw)
                             {
@@ -376,13 +376,13 @@
 
                 foreach (Game game in this.Games)
                 {
-                    if (game.White == this.Player && game.Result == Result.White)
+                    if (game.WhitePlayer == this.Player && game.Result == Result.White)
                     {
                         wins++;
                         continue;
                     }
 
-                    if (game.Black == this.Player && game.Result == Result.Black)
+                    if (game.BlackPlayer == this.Player && game.Result == Result.Black)
                     {
                         wins++;
                         continue;
@@ -401,7 +401,7 @@
         {
             get
             {
-                return (this.Games.Where(i => i.White == this.Player).Count(), this.Games.Where(i => i.Black == this.Player).Count());
+                return (this.Games.Where(i => i.WhitePlayer == this.Player).Count(), this.Games.Where(i => i.BlackPlayer == this.Player).Count());
             }
         }
 
@@ -434,7 +434,7 @@
 
             foreach (Game game in this.Games)
             {
-                if (game.White == this.Player && game.Black == player.Player)
+                if (game.WhitePlayer == this.Player && game.BlackPlayer == player.Player)
                 {
                     if (game.Result == Result.White)
                     {
@@ -449,7 +449,7 @@
                     }
                 }
 
-                if (game.Black == this.Player && game.White == player.Player)
+                if (game.BlackPlayer == this.Player && game.WhitePlayer == player.Player)
                 {
                     if (game.Result == Result.White)
                     {

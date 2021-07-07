@@ -43,14 +43,14 @@
 
             foreach (Game game in games)
             {
-                if (!PlayerDatabase.Players.Contains(game.White))
+                if (!PlayerDatabase.Players.Contains(game.WhitePlayer))
                 {
-                    PlayerDatabase.Players.Add(game.White);
+                    PlayerDatabase.Players.Add(game.WhitePlayer);
                 }
 
-                if (!PlayerDatabase.Players.Contains(game.Black))
+                if (!PlayerDatabase.Players.Contains(game.BlackPlayer))
                 {
-                    PlayerDatabase.Players.Add(game.Black);
+                    PlayerDatabase.Players.Add(game.BlackPlayer);
                 }
             }
 

@@ -81,8 +81,8 @@
                 return;
             }
 
-            Player white = game.White;
-            Player black = game.Black;
+            Player white = game.WhitePlayer;
+            Player black = game.BlackPlayer;
 
             double whiteRating = white.Rating;
             double blackRating = black.Rating;

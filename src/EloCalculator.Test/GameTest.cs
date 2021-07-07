@@ -31,7 +31,7 @@ namespace EloCalculator.Test
         }
 
         /// <summary>
-        /// Tests <see cref="Game.White"/>.
+        /// Tests <see cref="Game.WhitePlayer"/>.
         /// </summary>
         [TestMethod]
         public void GameWhite()
@@ -44,7 +44,7 @@ namespace EloCalculator.Test
 
             Game game = new(white, black, result, dateTime, rated);
 
-            Assert.AreEqual(white, game.White);
+            Assert.AreEqual(white, game.WhitePlayer);
 
             GameDatabase.Games.Clear();
             PlayerDatabase.Players.Clear();
@@ -71,7 +71,7 @@ namespace EloCalculator.Test
         }
 
         /// <summary>
-        /// Tests <see cref="Game.Black"/>.
+        /// Tests <see cref="Game.BlackPlayer"/>.
         /// </summary>
         [TestMethod]
         public void GameBlack()
@@ -84,7 +84,7 @@ namespace EloCalculator.Test
 
             Game game = new(white, black, result, dateTime, rated);
 
-            Assert.AreEqual(black, game.Black);
+            Assert.AreEqual(black, game.BlackPlayer);
 
             GameDatabase.Games.Clear();
             PlayerDatabase.Players.Clear();

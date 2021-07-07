@@ -96,15 +96,15 @@
         {
             this.Games.Add(game);
 
-            if (!this.Tournament.Players.Where(i => i.Player == game.White).Any())
+            if (!this.Tournament.Players.Where(i => i.Player == game.WhitePlayer).Any())
             {
-                TournamentPlayer player = new(this.Tournament, game.White);
+                TournamentPlayer player = new(this.Tournament, game.WhitePlayer);
                 this.Tournament.Players.Add(player);
             }
 
-            if (!this.Tournament.Players.Where(i => i.Player == game.Black).Any())
+            if (!this.Tournament.Players.Where(i => i.Player == game.BlackPlayer).Any())
             {
-                TournamentPlayer player = new(this.Tournament, game.Black);
+                TournamentPlayer player = new(this.Tournament, game.BlackPlayer);
                 this.Tournament.Players.Add(player);
             }
         }
@@ -119,15 +119,15 @@
             {
                 this.Games.Add(game);
 
-                if (!this.Tournament.Players.Where(i => i.Player == game.White).Any())
+                if (!this.Tournament.Players.Where(i => i.Player == game.WhitePlayer).Any())
                 {
-                    TournamentPlayer player = new(this.Tournament, game.White);
+                    TournamentPlayer player = new(this.Tournament, game.WhitePlayer);
                     this.Tournament.Players.Add(player);
                 }
 
-                if (!this.Tournament.Players.Where(i => i.Player == game.Black).Any())
+                if (!this.Tournament.Players.Where(i => i.Player == game.BlackPlayer).Any())
                 {
-                    TournamentPlayer player = new(this.Tournament, game.Black);
+                    TournamentPlayer player = new(this.Tournament, game.BlackPlayer);
                     this.Tournament.Players.Add(player);
                 }
             }

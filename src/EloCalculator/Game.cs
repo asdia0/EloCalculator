@@ -19,17 +19,17 @@
         /// Gets the <see cref="Player"/> that played as white.
         /// </summary>
         [JsonIgnore]
-        public Player White { get; }
+        public Player WhitePlayer { get; }
 
         /// <summary>
-        /// Gets <see cref="White"/>'s unique identification number.
+        /// Gets <see cref="WhitePlayer"/>'s unique identification number.
         /// </summary>
         [JsonProperty("White")]
         public int WhiteID
         {
             get
             {
-                return this.White.ID;
+                return this.WhitePlayer.ID;
             }
         }
 
@@ -37,17 +37,17 @@
         /// Gets the <see cref="Player"/> that played as black.
         /// </summary>
         [JsonIgnore]
-        public Player Black { get; }
+        public Player BlackPlayer { get; }
 
         /// <summary>
-        /// Gets <see cref="Black"/>'s unique identification number.
+        /// Gets <see cref="BlackPlayer"/>'s unique identification number.
         /// </summary>
         [JsonProperty("Black")]
         public int BlackID
         {
             get
             {
-                return this.Black.ID;
+                return this.BlackPlayer.ID;
             }
         }
 
@@ -64,7 +64,7 @@
         public DateTime DateTime { get; }
 
         /// <summary>
-        /// Gets a value indicating whether the game affects <see cref="White"/> and <see cref="Black"/>'s ratings.
+        /// Gets a value indicating whether the game affects <see cref="WhitePlayer"/> and <see cref="BlackPlayer"/>'s ratings.
         /// </summary>
         [JsonProperty]
         public bool Rated { get; }
@@ -85,8 +85,8 @@
             }
 
             this.ID = GameDatabase.Games.Any() ? GameDatabase.Games.Last().ID + 1 : 0;
-            this.White = white;
-            this.Black = black;
+            this.WhitePlayer = white;
+            this.BlackPlayer = black;
             this.Result = result;
             this.DateTime = dateTime;
             this.Rated = rated;
