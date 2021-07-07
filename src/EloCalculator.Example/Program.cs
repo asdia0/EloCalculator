@@ -64,6 +64,11 @@
             {
                 Console.WriteLine((boomer.Player.Name, boomer.Score));
             }
+
+            // Export data to JSON files
+            GameDatabase.Export("games.json");
+            PlayerDatabase.Export("players.json");
+            TournamentDatabase.Export("tournament.json");
         }
     }
 }
