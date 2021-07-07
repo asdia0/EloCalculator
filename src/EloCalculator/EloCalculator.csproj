@@ -10,6 +10,8 @@
     <RepositoryUrl>https://github.com/asdia0/EloCalculator</RepositoryUrl>
     <PackageTags>chess elo calculator</PackageTags>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+    <Version>1.0.1</Version>
+    <PackageReleaseNotes>Fix Database loading bug</PackageReleaseNotes>
   </PropertyGroup>
 
   <ItemGroup>
