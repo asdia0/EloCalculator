@@ -10,8 +10,8 @@
     <RepositoryUrl>https://github.com/asdia0/EloCalculator</RepositoryUrl>
     <PackageTags>chess elo calculator</PackageTags>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
-    <Version>1.0.1</Version>
-    <PackageReleaseNotes>Fix Database loading bug</PackageReleaseNotes>
+    <Version>1.0.2</Version>
+    <PackageReleaseNotes>Fix bug that doubled GameDatabase.Games when GameDatabase.Load() was called</PackageReleaseNotes>
   </PropertyGroup>
 
   <ItemGroup>
