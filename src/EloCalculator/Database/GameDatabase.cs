@@ -53,8 +53,6 @@
                     PlayerDatabase.Players.Add(game.BlackPlayer);
                 }
             }
-
-            Games.AddRange(games);
         }
 
         /// <summary>
