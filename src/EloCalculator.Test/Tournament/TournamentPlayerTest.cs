@@ -160,9 +160,9 @@
                 new(player1, player2, Result.Black, DateTime.Now, true),
             };
 
-            tournament.AddRound();
+            TournamentRound round = new(tournament);
 
-            tournament.Rounds[0].AddGames(games);
+            round.AddGames(games);
 
             Assert.AreEqual(1.5, tplayer1.Score);
 
@@ -191,7 +191,7 @@
                 new(player1, player2, Result.Black, DateTime.Now, true),
             };
 
-            tournament.AddRound();
+            _ = new TournamentRound(tournament);
 
             tournament.Rounds[0].AddGames(games);
 
@@ -222,7 +222,7 @@
                 new(player1, player2, Result.Black, DateTime.Now, true),
             };
 
-            tournament.AddRound();
+            _ = new TournamentRound(tournament);
 
             tournament.Rounds[0].AddGames(games);
 
@@ -253,7 +253,7 @@
                 new(player1, player2, Result.Black, DateTime.Now, true),
             };
 
-            tournament.AddRound();
+            _ = new TournamentRound(tournament);
 
             tournament.Rounds[0].AddGames(games);
 
@@ -284,7 +284,7 @@
                 new(player1, player2, Result.Black, DateTime.Now, true),
             };
 
-            tournament.AddRound();
+            _ = new TournamentRound(tournament);
 
             tournament.Rounds[0].AddGames(games);
 
@@ -315,7 +315,7 @@
                 new(player1, player2, Result.Black, DateTime.Now, true),
             };
 
-            tournament.AddRound();
+            _ = new TournamentRound(tournament);
 
             tournament.Rounds[0].AddGames(games);
 
@@ -346,7 +346,7 @@
                 new(player1, player2, Result.Black, DateTime.Now, true),
             };
 
-            tournament.AddRound();
+            _ = new TournamentRound(tournament);
 
             tournament.Rounds[0].AddGames(games);
 
@@ -377,7 +377,7 @@
                 new(player1, player2, Result.Black, DateTime.Now, true),
             };
 
-            tournament.AddRound();
+            _ = new TournamentRound(tournament);
 
             tournament.Rounds[0].AddGames(games);
 
@@ -406,7 +406,7 @@
                 new(player1, player2, Result.White, DateTime.Now, true),
             };
 
-            tournament.AddRound();
+            _ = new TournamentRound(tournament);
 
             tournament.Rounds[0].AddGames(games);
 
@@ -435,7 +435,7 @@
                 new(player1, player2, Result.Black, DateTime.Now, true),
             };
 
-            tournament.AddRound();
+            _ = new TournamentRound(tournament);
 
             tournament.Rounds[0].AddGames(games);
 
@@ -464,7 +464,7 @@
                 new(player1, player2, Result.Draw, DateTime.Now, true),
             };
 
-            tournament.AddRound();
+            _ = new TournamentRound(tournament);
 
             tournament.Rounds[0].AddGames(games);
 

@@ -22,8 +22,6 @@
 
             TournamentRound round = new(tournament);
 
-            tournament.AddRound(round);
-
             Assert.AreEqual(tournament, round.Tournament);
 
             TournamentDatabase.Tournaments.Clear();
@@ -38,8 +36,6 @@
             Tournament tournament = new("Tournament 1", TournamentType.Arena);
 
             TournamentRound round = new(tournament);
-
-            tournament.AddRound(round);
 
             Assert.AreEqual(0, round.ID);
 
@@ -56,8 +52,6 @@
 
             TournamentRound round = new(tournament);
 
-            tournament.AddRound(round);
-
             CollectionAssert.AreEquivalent(new List<Game>(), round.Games.ToList());
 
             TournamentDatabase.Tournaments.Clear();
@@ -73,8 +67,6 @@
 
             TournamentRound round = new(tournament);
 
-            tournament.AddRound(round);
-
             CollectionAssert.AreEquivalent(new List<int>(), round.GamesID);
 
             TournamentDatabase.Tournaments.Clear();
@@ -89,8 +81,6 @@
             Tournament tournament = new("Tournament 1", TournamentType.Arena);
 
             TournamentRound round = new(tournament);
-
-            tournament.AddRound(round);
 
             TournamentPlayer tplayer = new(tournament, new("Player 1"));
 
@@ -112,8 +102,6 @@
 
             TournamentRound round = new(tournament);
 
-            tournament.AddRound(round);
-
             TournamentPlayer tplayer = new(tournament, new("Player 1"));
 
             round.PairingBye = tplayer;
@@ -133,8 +121,6 @@
             Tournament tournament = new("Tournament 1", TournamentType.Arena);
 
             TournamentRound round = new(tournament);
-
-            tournament.AddRound(round);
 
             TournamentPlayer tplayer = new(tournament, new("Player 1"));
 
@@ -156,8 +142,6 @@
 
             TournamentRound round = new(tournament);
 
-            tournament.AddRound(round);
-
             TournamentPlayer tplayer = new(tournament, new("Player 1"));
 
             round.RequestedByes.Add(tplayer);
@@ -177,8 +161,6 @@
             Tournament tournament = new("Tournament 1", TournamentType.Arena);
 
             TournamentRound round = new(tournament);
-
-            tournament.AddRound(round);
 
             Game game = new(new("Player 1"), new("Player 2"), Result.White, DateTime.Now, true);
 
@@ -204,8 +186,6 @@
             Tournament tournament = new("Tournament 1", TournamentType.Arena);
 
             TournamentRound round = new(tournament);
-
-            tournament.AddRound(round);
 
             Game game1 = new(new("Player 1"), new("Player 2"), Result.White, DateTime.Now, true);
             Game game2 = new(new("Player 1"), new("Player 2"), Result.White, DateTime.Now, true);

@@ -91,8 +91,6 @@
 
             TournamentPlayer player = new(tournament, new Player("Player 1"));
 
-            tournament.AddPlayer(player);
-
             List<TournamentPlayer> expected = new()
             {
                 player,
@@ -113,9 +111,7 @@
             Tournament tournament = new("Tournament 1", TournamentType.RoundRobin);
             Tournament nonLocal = new("Tournament 2", TournamentType.RoundRobin);
 
-            TournamentPlayer player = new(nonLocal, new Player("Player 1"));
-
-            tournament.AddPlayer(player);
+            _ = new TournamentPlayer(nonLocal, new Player("Player 1"));
 
             List<TournamentPlayer> expected = new();
 
@@ -141,8 +137,6 @@
                 new(nonLocal, new("Player 3")),
             };
 
-            tournament.AddPlayers(players);
-
             List<TournamentPlayer> expected = players.ToList();
             expected.RemoveAt(2);
 
@@ -160,7 +154,7 @@
         {
             Tournament tournament = new("Tournament 1", TournamentType.RoundRobin);
 
-            tournament.AddRound();
+            _ = new TournamentRound(tournament);
 
             Assert.AreEqual(1, tournament.Rounds.Count);
 
@@ -176,8 +170,6 @@
             Tournament tournament = new("Tournament 1", TournamentType.RoundRobin);
 
             TournamentRound round = new(tournament);
-
-            tournament.AddRound(round);
 
             List<TournamentRound> expected = new()
             {
@@ -198,9 +190,7 @@
             Tournament tournament = new("Tournament 1", TournamentType.RoundRobin);
             Tournament nonLocal = new("Tournament 2", TournamentType.RoundRobin);
 
-            TournamentRound round = new(nonLocal);
-
-            tournament.AddRound(round);
+            _ = new TournamentRound(nonLocal);
 
             List<TournamentRound> expected = new();
 
@@ -225,8 +215,6 @@
                 new(nonLocal),
             };
 
-            tournament.AddRounds(rounds);
-
             List<TournamentRound> expected = rounds.ToList();
             expected.RemoveAt(2);
 
@@ -246,11 +234,8 @@
             Player player1 = new("Player 1");
             Player player2 = new("Player 2");
 
-            tournament.AddPlayers(new()
-            {
-                new(tournament, player1),
-                new(tournament, player2),
-            });
+            _ = new TournamentPlayer(tournament, player1);
+            _ = new TournamentPlayer(tournament, player2);
 
             List<TournamentPlayer> expected = new()
             {
@@ -275,11 +260,11 @@
             Player player1 = new("Player 1");
             Player player2 = new("Player 2");
 
-            tournament.AddPlayers(new()
+            _ = new List<TournamentPlayer>()
             {
                 new(tournament, player1),
                 new(tournament, player2),
-            });
+            };
 
             List<TournamentPlayer> expected = new()
             {
@@ -304,11 +289,11 @@
             Player player1 = new("Player 1");
             Player player2 = new("Player 2");
 
-            tournament.AddPlayers(new()
+            _ = new List<TournamentPlayer>()
             {
                 new(tournament, player1),
                 new(tournament, player2),
-            });
+            };
 
             List<TournamentPlayer> expected = new()
             {
@@ -334,12 +319,6 @@
             TournamentPlayer active = new(tournament, new("Player 2"));
 
             inactive.Active = false;
-
-            tournament.AddPlayers(new()
-            {
-                inactive,
-                active,
-            });
 
             List<TournamentPlayer> expected = new()
             {
@@ -367,13 +346,6 @@
             TournamentPlayer tplayer1 = new(tournament, player1);
             TournamentPlayer tplayer2 = new(tournament, player2);
             TournamentPlayer tplayer3 = new(tournament, player3);
-
-            tournament.AddPlayers(new()
-            {
-                tplayer1,
-                tplayer2,
-                tplayer3,
-            });
 
             _ = new Game(player1, player2, Result.White, DateTime.Now, true);
 
@@ -408,14 +380,6 @@
             TournamentPlayer tplayer3 = new(tournament, player3);
             TournamentPlayer tplayer4 = new(tournament, player4);
 
-            tournament.AddPlayers(new()
-            {
-                tplayer1,
-                tplayer2,
-                tplayer3,
-                tplayer4,
-            });
-
             _ = new Game(player1, player2, Result.White, DateTime.Now, true);
 
             List<(TournamentPlayer, TournamentPlayer?)> expected = new()
@@ -446,13 +410,6 @@
             TournamentPlayer tplayer1 = new(tournament, player1);
             TournamentPlayer tplayer2 = new(tournament, player2);
             TournamentPlayer tplayer3 = new(tournament, player3);
-
-            tournament.AddPlayers(new()
-            {
-                tplayer1,
-                tplayer2,
-                tplayer3,
-            });
 
             _ = new Game(player1, player2, Result.White, DateTime.Now, true);
 
@@ -487,14 +444,6 @@
             TournamentPlayer tplayer3 = new(tournament, player3);
             TournamentPlayer tplayer4 = new(tournament, player4);
 
-            tournament.AddPlayers(new()
-            {
-                tplayer1,
-                tplayer2,
-                tplayer3,
-                tplayer4,
-            });
-
             _ = new Game(player1, player2, Result.White, DateTime.Now, true);
 
             List<(TournamentPlayer, TournamentPlayer?)> expected = new()
@@ -526,14 +475,7 @@
             TournamentPlayer tplayer2 = new(tournament, player2);
             TournamentPlayer tplayer3 = new(tournament, player3);
 
-            tournament.AddPlayers(new()
-            {
-                tplayer1,
-                tplayer2,
-                tplayer3,
-            });
-
-            tournament.AddRound();
+            _ = new TournamentRound(tournament);
 
             tournament.Rounds[0].AddGame(new(player1, player2, Result.Black, DateTime.Now, true));
 
@@ -568,15 +510,7 @@
             TournamentPlayer tplayer3 = new(tournament, player3);
             TournamentPlayer tplayer4 = new(tournament, player4);
 
-            tournament.AddPlayers(new()
-            {
-                tplayer1,
-                tplayer2,
-                tplayer3,
-                tplayer4,
-            });
-
-            tournament.AddRound();
+            _ = new TournamentRound(tournament);
 
             tournament.Rounds[0].AddGames(new()
             {
@@ -613,13 +547,6 @@
             TournamentPlayer tplayer2 = new(tournament, player2);
             TournamentPlayer tplayer3 = new(tournament, player3);
 
-            tournament.AddPlayers(new()
-            {
-                tplayer1,
-                tplayer2,
-                tplayer3,
-            });
-
             _ = new Game(player1, player2, Result.White, DateTime.Now, true);
 
             List<(TournamentPlayer, TournamentPlayer?)> expected = new()
@@ -653,14 +580,6 @@
             TournamentPlayer tplayer3 = new(tournament, player3);
             TournamentPlayer tplayer4 = new(tournament, player4);
 
-            tournament.AddPlayers(new()
-            {
-                tplayer1,
-                tplayer2,
-                tplayer3,
-                tplayer4,
-            });
-
             _ = new Game(player1, player2, Result.White, DateTime.Now, true);
 
             List<(TournamentPlayer, TournamentPlayer?)> expected = new()
@@ -692,14 +611,7 @@
             TournamentPlayer tplayer2 = new(tournament, player2);
             TournamentPlayer tplayer3 = new(tournament, player3);
 
-            tournament.AddPlayers(new()
-            {
-                tplayer1,
-                tplayer2,
-                tplayer3,
-            });
-
-            tournament.AddRound();
+            _ = new TournamentRound(tournament);
 
             tournament.Rounds[0].AddGame(new(player1, player2, Result.Black, DateTime.Now, true));
 
@@ -734,15 +646,7 @@
             TournamentPlayer tplayer3 = new(tournament, player3);
             TournamentPlayer tplayer4 = new(tournament, player4);
 
-            tournament.AddPlayers(new()
-            {
-                tplayer1,
-                tplayer2,
-                tplayer3,
-                tplayer4,
-            });
-
-            tournament.AddRound();
+            _ = new TournamentRound(tournament);
 
             tournament.Rounds[0].AddGames(new()
             {
@@ -779,13 +683,6 @@
             TournamentPlayer tplayer2 = new(tournament, player2);
             TournamentPlayer tplayer3 = new(tournament, player3);
 
-            tournament.AddPlayers(new()
-            {
-                tplayer1,
-                tplayer2,
-                tplayer3,
-            });
-
             _ = new Game(player1, player2, Result.White, DateTime.Now, true);
 
             List<(TournamentPlayer, TournamentPlayer?)> expected = new()
@@ -819,14 +716,6 @@
             TournamentPlayer tplayer3 = new(tournament, player3);
             TournamentPlayer tplayer4 = new(tournament, player4);
 
-            tournament.AddPlayers(new()
-            {
-                tplayer1,
-                tplayer2,
-                tplayer3,
-                tplayer4,
-            });
-
             _ = new Game(player1, player2, Result.White, DateTime.Now, true);
 
             List<(TournamentPlayer, TournamentPlayer?)> expected = new()
@@ -858,14 +747,7 @@
             TournamentPlayer tplayer2 = new(tournament, player2);
             TournamentPlayer tplayer3 = new(tournament, player3);
 
-            tournament.AddPlayers(new()
-            {
-                tplayer1,
-                tplayer2,
-                tplayer3,
-            });
-
-            tournament.AddRound();
+            _ = new TournamentRound(tournament);
 
             tournament.Rounds[0].AddGame(new(player1, player2, Result.Black, DateTime.Now, true));
 
@@ -900,15 +782,7 @@
             TournamentPlayer tplayer3 = new(tournament, player3);
             TournamentPlayer tplayer4 = new(tournament, player4);
 
-            tournament.AddPlayers(new()
-            {
-                tplayer1,
-                tplayer2,
-                tplayer3,
-                tplayer4,
-            });
-
-            tournament.AddRound();
+            _ = new TournamentRound(tournament);
 
             tournament.Rounds[0].AddGames(new()
             {
@@ -945,15 +819,8 @@
             TournamentPlayer tplayer2 = new(tournament, player2);
             TournamentPlayer tplayer3 = new(tournament, player3);
 
-            tournament.AddPlayers(new()
-            {
-                tplayer1,
-                tplayer2,
-                tplayer3,
-            });
-
-            tournament.AddRound();
-            tournament.AddRound();
+            _ = new TournamentRound(tournament);
+            _ = new TournamentRound(tournament);
 
             List<(TournamentPlayer, TournamentPlayer?)> expected = new()
             {
@@ -986,16 +853,8 @@
             TournamentPlayer tplayer3 = new(tournament, player3);
             TournamentPlayer tplayer4 = new(tournament, player4);
 
-            tournament.AddPlayers(new()
-            {
-                tplayer1,
-                tplayer2,
-                tplayer3,
-                tplayer4,
-            });
-
-            tournament.AddRound();
-            tournament.AddRound();
+            _ = new TournamentRound(tournament);
+            _ = new TournamentRound(tournament);
 
             List<(TournamentPlayer, TournamentPlayer?)> expected = new()
             {
