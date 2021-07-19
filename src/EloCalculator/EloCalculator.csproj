@@ -12,6 +12,7 @@
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
     <Version>1.0.2</Version>
     <PackageReleaseNotes>Fix bug that doubled GameDatabase.Games when GameDatabase.Load() was called</PackageReleaseNotes>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
   </PropertyGroup>
 
   <ItemGroup>
