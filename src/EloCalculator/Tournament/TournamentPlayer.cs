@@ -416,6 +416,7 @@
             this.Tournament = tournament;
             this.Player = player;
             this.Active = true;
+            this.Tournament.Players.Add(this);
         }
 
         /// <summary>

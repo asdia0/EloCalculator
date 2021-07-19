@@ -86,6 +86,7 @@
             this.Tournament = tournament;
             this.RequestedByes = new();
             this.Games = new();
+            this.Tournament.Rounds.Add(this);
         }
 
         /// <summary>
