@@ -100,13 +100,11 @@
             if (!this.Tournament.Players.Where(i => i.Player == game.WhitePlayer).Any())
             {
                 TournamentPlayer player = new(this.Tournament, game.WhitePlayer);
-                this.Tournament.Players.Add(player);
             }
 
             if (!this.Tournament.Players.Where(i => i.Player == game.BlackPlayer).Any())
             {
                 TournamentPlayer player = new(this.Tournament, game.BlackPlayer);
-                this.Tournament.Players.Add(player);
             }
         }
 
