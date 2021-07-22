@@ -43,9 +43,6 @@
             // Create a round in the tournament.
             TournamentRound firstRound = new(spookBoomer);
 
-            // Add the round to the tournament.
-            spookBoomer.AddRound(firstRound);
-
             // Add games that were played during that round.
             firstRound.AddGames(new()
             {
