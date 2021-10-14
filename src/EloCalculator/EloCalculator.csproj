@@ -10,8 +10,8 @@
     <RepositoryUrl>https://github.com/asdia0/EloCalculator</RepositoryUrl>
     <PackageTags>chess elo calculator</PackageTags>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
-    <Version>1.0.3</Version>
-    <PackageReleaseNotes>Reduced TournamentPlayer and TournamentRound redundancy</PackageReleaseNotes>
+    <Version>1.0.4</Version>
+    <PackageReleaseNotes>Fix TournamentPlayers being added twice when a game is directly added to the Tournament</PackageReleaseNotes>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
   </PropertyGroup>
 
