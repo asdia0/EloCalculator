@@ -14,12 +14,12 @@
         /// <summary>
         /// <see cref="Player"/>s' initial rating.
         /// </summary>
-        public static readonly double DefaultRating = 1000;
+        public static double DefaultRating = 1000;
 
         /// <summary>
         /// The largest change that can occur to a <see cref="Player"/>'s rating.
         /// </summary>
-        public static readonly int KCoefficient = 40;
+        public static int KCoefficient = 40;
 
         private static List<Player> _Players = new();
 
